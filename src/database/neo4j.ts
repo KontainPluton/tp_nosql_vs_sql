@@ -17,18 +17,18 @@ export class Neo4j implements IDatabase {
         this.driver = neo4j.driver(this.uri, neo4j.auth.basic(this.user, this.password));
     }
 
-    connect() {
-
+    async connect(): Promise<any> {
+        await this.driver.verifyConnectivity();
     }
 
-    disconnect() {
-        this.driver.close();
+    async disconnect() {
+        await this.driver.close();
     }
 
-    request(query: string, args: any[], callback: any): any {
+    async request(query: string, args: any[], callback: any): Promise<any> {
         let session: Session = this.driver.session();
 
-        session.run(query, args)
+        await session.run(query, args)
             .then((result: any) => {
                 callback(result);
             })
