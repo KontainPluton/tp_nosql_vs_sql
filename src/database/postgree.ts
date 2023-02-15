@@ -6,12 +6,13 @@ export class Postgree implements IDatabase {
 
     client: any;
 
-    constructor(host: string, port: number, user: string, password: string) {
+    constructor(host: string, database: string, port: number, user: string, password: string) {
         this.client = new Client({
             host: host,
             port: port,
             user: user,
             password: password,
+            database: database
         });
 
     }
@@ -28,7 +29,7 @@ export class Postgree implements IDatabase {
 
         this.client.query(query, args)
             .then((result: any) => {
-                callback(result);
+                callback(result.rows);
             })
             .catch((error: any) => {
                 console.log(error);

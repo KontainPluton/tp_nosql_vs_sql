@@ -6,7 +6,7 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT;
 
-const api = require('./api');
+const api = require('./api/api');
 
 app.use(express.static('public'));
 
