@@ -1,10 +1,49 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>TP SQL / NOSQL</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Tp_NoSQL_vs_SQL</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Acme&amp;display=swap">
 </head>
+
 <body>
-    <h1>Un tp de fou</h1>
+    <nav class="navbar navbar-light navbar-expand-md" style="background: linear-gradient(101deg, #ffb3ea, #e159bb), #ffb3ea;border-bottom-style: solid;border-bottom-color: var(--bs-pink);">
+        <div class="container-fluid"><a class="navbar-brand" href="#">TP &gt; NoSQL vs SQL</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="#">Insertions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Requêtes</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-md-8 offset-md-2">
+            <form>
+                <div class="d-flex justify-content-md-center align-items-md-center">
+                    <div class="dropdown border rounded-0"><button class="btn btn-light btn-sm dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">TABLE</button>
+                        <div class="dropdown-menu font-monospace fs-6" style="background: linear-gradient(#ffb3ea, white);"><a class="dropdown-item" href="#">Person</a><a class="dropdown-item" href="#">Order</a><a class="dropdown-item" href="#">Product</a></div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-md-center align-items-md-center" style="margin-top: 5px;"><input class="form-control form-control-sm d-md-flex" type="number" min="1" max="1000000" step="1" placeholder="Nombre d'insertions" name="nbInsert"></div>
+                <div class="d-flex justify-content-md-center align-items-md-center" style="margin-top: 5px;"><button class="btn btn-light btn-sm" type="submit" style="background: linear-gradient(106deg, rgb(255,179,234) 19%, rgb(229,83,189) 99%), rgb(255,179,234);color: rgb(0,0,0);">Envoyer</button></div>
+            </form>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 5px;margin-bottom: 5px;">
+        <div class="col d-md-flex justify-content-md-center">
+            <h3 style="font-size: 19.52px;"><span style="text-decoration: underline; color: rgb(251, 168, 228);">---Résultats---</span></h3>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 5px;margin-bottom: 5px;">
+        <div class="col-md-10 offset-md-1">
+            <p class="text-center">Temps de la requête (en ms) :&nbsp;</p>
+        </div>
+    </div>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
+
 </html>
