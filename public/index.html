@@ -31,10 +31,10 @@
                 <div class="d-flex justify-content-md-center align-items-md-center" style="margin-top: 5px;"><input class="form-control form-control-sm d-md-flex" type="number" min="1" max="1000000" step="1" placeholder="Nombre d'insertions" name="nbInsert"></div>
                 <div class="d-flex justify-content-md-center align-items-md-center" style="margin-top: 5px;">
                     <div class="dropdown border rounded-0"><button class="btn btn-light btn-sm dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">BATCH</button>
-                        <div class="dropdown-menu font-monospace fs-6" id="dropdown-table-2" style="background: radial-gradient(#ffb3ea 27%, white 86%);"><a class="dropdown-item" id="dropdown-item-1" href="#">1</a><a class="dropdown-item" id="dropdown-item-10" href="#">10</a><a class="dropdown-item" id="dropdown-item-100" href="#">100</a><a class="dropdown-item" id="dropdown-item-1000" href="#">1 000</a><a class="dropdown-item" id="dropdown-item-10000" href="#">10 000</a><a class="dropdown-item" id="dropdown-item-100000" href="#">100 000</a><a class="dropdown-item" id="dropdown-item-1000000" href="#">1 000 000</a></div>
+                        <div class="dropdown-menu font-monospace fs-6" id="dropdown-batch" style="background: radial-gradient(#ffb3ea 27%, white 86%);"><a class="dropdown-item" id="dropdown-item-1" href="#">1</a><a class="dropdown-item" id="dropdown-item-10" href="#">10</a><a class="dropdown-item" id="dropdown-item-100" href="#">100</a><a class="dropdown-item" id="dropdown-item-1000" href="#">1 000</a><a class="dropdown-item" id="dropdown-item-10000" href="#">10 000</a><a class="dropdown-item" id="dropdown-item-100000" href="#">100 000</a><a class="dropdown-item" id="dropdown-item-1000000" href="#">1 000 000</a></div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-md-center align-items-md-center" style="margin-top: 5px;"><button class="btn btn-light btn-sm" type="submit" style="background: linear-gradient(106deg, rgb(255,179,234) 19%, rgb(229,83,189) 99%), rgb(255,179,234);color: rgb(0,0,0);">Envoyer</button></div>
+                <div class="d-flex justify-content-md-center align-items-md-center" style="margin-top: 5px;"><button class="btn btn-light btn-sm" id="button-send" type="button" style="background: linear-gradient(106deg, rgb(255,179,234) 19%, rgb(229,83,189) 99%), rgb(255,179,234);color: rgb(0,0,0);">Envoyer</button></div>
             </form>
         </div>
     </div>
@@ -46,6 +46,7 @@
     <div class="row" style="margin-top: 5px;margin-bottom: 5px;">
         <div class="col-md-10 offset-md-1">
             <p class="text-center">Temps de la requête (en ms) :&nbsp;</p>
+            <p class="text-center" id="response-time"></p>
         </div>
     </div>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
