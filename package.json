@@ -1,0 +1,32 @@
+{
+  "name": "tp_nosql_vs_sql",
+  "version": "1.0.0",
+  "description": "Project with SQL and NoSQL (neo4j)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "npx nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KontainPluton/tp_nosql_vs_sql.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KontainPluton/tp_nosql_vs_sql/issues"
+  },
+  "homepage": "https://github.com/KontainPluton/tp_nosql_vs_sql#readme",
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^18.13.0",
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
+  }
+}
