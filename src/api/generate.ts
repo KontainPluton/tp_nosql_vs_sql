@@ -19,4 +19,18 @@ router.post('/', async(req: any, res: any) => {
     }
 });
 
+router.delete('/', async(req: any, res: any) => {
+    if (req.body.table === 'person') {
+        await GenerateScript.purgePerson();
+        res.json({response: "OK"});
+    }
+    else if (req.body.table === 'product') {
+        //TODO
+    }
+    else {
+        console.log("Erreur");
+        res.send("Le type " + req.body.type + " n'existe pas");
+    }
+});
+
 export default router;

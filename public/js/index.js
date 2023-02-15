@@ -3,6 +3,7 @@ let dropdownBatch = document.getElementById("dropdown-batch");
 let inputNumberInsert = document.getElementById("input-number-insert");
 let responseInput = document.getElementById("response-time");
 let buttonSend = document.getElementById("button-send");
+let buttonPurge = document.getElementById("button-purge");
 
 let table = "";
 let insertQuantity = 0;
@@ -46,7 +47,22 @@ buttonSend.addEventListener("click", function(event) {
    })
        .then((response) => response.json()
            .then((data) => {
-               console.log(data);
                responseInput.textContent = data.time;
            }));
+});
+
+buttonPurge.addEventListener("click", function(event) {
+    fetch('http://localhost:3000/api/generate', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            table: table
+        })
+    })
+        .then((response) => response.json()
+            .then((data) => {
+                responseInput.textContent = "Purge : " + data.response;
+            }));
 });

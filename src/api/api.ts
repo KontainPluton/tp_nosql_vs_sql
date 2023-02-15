@@ -39,11 +39,16 @@ router.get('/query/', async(req: any, res: any) => {
     res.send("OK");
 });
 
-router.get('/query2/', async(req: any, res: any) => {
+router.get('/count/', async(req: any, res: any) => {
     let db: IDatabase = Database.getDatabase();
     await db.connect();
-    let result = await db.request("SELECT COUNT(*) from Person", []);
-    res.send(result);
+    let result = await db.request("SELECT COUNT(*) from " + req.query.table, []);
+    if (result === null) {
+        res.send("La table " + req.query.table + " n'existe pas");
+    }
+    else {
+        res.send(result);
+    }
     await db.disconnect();
 });
 
