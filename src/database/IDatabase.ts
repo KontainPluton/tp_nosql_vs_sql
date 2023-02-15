@@ -1,9 +1,15 @@
+import { IGenerate } from './IGenerate';
 export class Database {
 
     private static database: IDatabase;
+    private static generateScript: IGenerate;
 
     public static setDatabase(database: IDatabase) {
         this.database = database;
+    }
+
+    public static setGenerateScript(generateScript: IGenerate) {
+        this.generateScript = generateScript;
     }
 
     public static getDatabase(): IDatabase {
@@ -11,6 +17,13 @@ export class Database {
             throw new Error("Database not set");
         }
         return this.database;
+    };
+
+    public static getGenerateScript(): IGenerate {
+        if (this.generateScript === undefined || this.generateScript === null) {
+            throw new Error("GenerateScript not set");
+        }
+        return this.generateScript;
     };
 }
 

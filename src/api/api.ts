@@ -1,6 +1,7 @@
 import {Database, IDatabase, Neo4j, Postgres} from "../database";
 import generate from './generate';
 import { checkEnv } from './../utils';
+import { GeneratePostgres } from './../database/generatePostgres';
 
 const express = require('express');
 const router = express.Router();
@@ -21,6 +22,7 @@ router.get('/database/', (req: any, res: any) => {
             res.send("Changement de la bdd courante en neo4j validé");
         }
         else if (req.query.name === 'postgres') {
+            Database.setGenerateScript(new GeneratePostgres());
             Database.setDatabase(new Postgres(env.URL_POSTGRES!, env.DB_POSTGRES!, parseInt(env.PORT_POSTGRES!), 
                                               env.USER_POSTGRES!, env.PASSWORD_POSTGRES!));
             res.send("Changement de la bdd courante en postgree validé");
