@@ -14,7 +14,6 @@ router.get('/', (req: any, res: any) => {
 });
 
 router.get('/database/', (req: any, res: any) => {
-<<<<<<< HEAD
     if (Database.getDatabase() instanceof Neo4j) {
         res.json({database: "neo4j"});
     }
