@@ -61,8 +61,6 @@ export class GenerateScript {
         return endTime - time;
     }
 
-
-    // purge table person
     public static async purgePerson() {
         let db: IDatabase = Database.getDatabase();
         await db.connect();

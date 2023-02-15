@@ -11,25 +11,26 @@ router.get('/', (req: any, res: any) => {
 });
 
 router.get('/database/', (req: any, res: any) => {
-    if (req.query.name === 'neo4j') {
+    if (Database.getDatabase() instanceof Neo4j) {
+        res.json({database: "neo4j"});
+    }
+    else if (Database.getDatabase() instanceof Postgres) {
+        res.json({database: "postgres"});
+    }
+});
+
+router.post('/database/', (req: any, res: any) => {
+    if (req.body.database === 'neo4j') {
         Database.setDatabase(new Neo4j("localhost:7474", "neo4j", "neo4j"));
         res.send("Changement de la bdd courante en neo4j validé");
     }
-    else if (req.query.name === 'postgree') {
+    else if (req.body.database === 'postgres') {
         Database.setDatabase(new Postgres("localhost", "tp_database", 5432, "postgres", "postgres"));
         res.send("Changement de la bdd courante en postgree validé");
     }
     else {
-        res.send("La base de données " + req.query.name + " n'existe pas");
+        res.send("La base de données " + req.body.database + " n'existe pas");
     }
-});
-
-router.get('/query/', async(req: any, res: any) => {
-    let db: IDatabase = Database.getDatabase();
-    await db.connect();
-    await db.request("INSERT INTO Person (username) VALUES ('test')", []);
-    await db.disconnect();
-    res.send("OK");
 });
 
 router.get('/count/', async(req: any, res: any) => {
