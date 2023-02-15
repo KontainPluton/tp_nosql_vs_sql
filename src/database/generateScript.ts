@@ -14,9 +14,21 @@ export class GenerateScript {
                     script += ",";
                 }
             }
+            script += " RETURNING idperson";
+            let result = await db.request(script, []);
 
-
-            await db.request(script, []);
+            if (batchQuantity > 1) {
+                for (let j = 0; j < result.length; j++) {
+                    let rand = Math.random();
+                    if (rand > 0.6) {
+                        rand = Math.floor(Math.random() * (result.length));
+                        while (rand === j) {
+                            rand = Math.floor(Math.random() * (result.length));
+                        }
+                        await db.request("INSERT INTO Follow (idFollower, idFollowed) VALUES (" + result[j].idperson + "," + result[j].idperson + ")", []);
+                    }
+                }
+            }
         }
         await db.disconnect();
         let endTime: number = new Date().getTime();
@@ -25,6 +37,7 @@ export class GenerateScript {
 
     public static async generateProduct(insertQuantity: number, batchQuantity: number) {
         let db: IDatabase = Database.getDatabase();
+        let time: number = new Date().getTime();
         await db.connect();
         for (let i = 0; i < insertQuantity; i+= batchQuantity) {
             let script: string = "INSERT INTO Person (username) VALUES ";
@@ -34,9 +47,22 @@ export class GenerateScript {
                     script += ",";
                 }
             }
-
+            script += " RETURNING idproduct";
             await db.request(script, []);
         }
+        await db.disconnect();
+        let endTime: number = new Date().getTime();
+        return endTime - time;
+    }
+
+
+    // purge table person
+    public static async purgePerson() {
+        let db: IDatabase = Database.getDatabase();
+        await db.connect();
+        await db.request("DELETE FROM Follow", []);
+        await db.request("DELETE FROM Person", []);
+        await db.request("ALTER SEQUENCE Person_idperson_seq RESTART WITH 1", []);
         await db.disconnect();
     }
 }

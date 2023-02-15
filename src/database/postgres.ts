@@ -35,8 +35,11 @@ export class Postgres implements IDatabase {
     }
 
     async request(query: string, args: any[]): Promise<any> {
-        let result = await this.client.query(query, args);
-        return result.rows;
+        let result = await this.client.query(query, args)
+            .catch((err: any) => {
+                console.error(err);
+            });
+        return result !== undefined ? result.rows : null;
     }
 
 }
