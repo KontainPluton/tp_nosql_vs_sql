@@ -7,32 +7,44 @@ export class GeneratePostgres implements IGenerate {
         let time: number = new Date().getTime();
         await db.connect();
 
-        let maxId: number = await db.request("SELECT MAX(idperson) FROM Person", []);
-        insertQuantity += maxId;
+        let result = await db.request("SELECT MAX(idperson) FROM Person", []);
+        if (result.max == null) {
+            result.max = 0;
+        }
+        insertQuantity += result.max;
 
-        for (let i = maxId; i < insertQuantity; i+= batchQuantity) {
+        for (let i = result.max; i < insertQuantity; i+= batchQuantity) {
             let script: string = "INSERT INTO Person (username) VALUES ";
             for (let j = 0; j < batchQuantity && i + j < insertQuantity; j++) {
-                script += "('Person " + i + "')";
+                script += "('Person " + (i + j) + "')";
                 if (j + 1 < batchQuantity) {
                     script += ",";
                 }
             }
             script += " RETURNING idperson";
             let result = await db.request(script, []);
-
             if (batchQuantity > 1) {
                 script = "INSERT INTO Follow (idFollower, idFollowed) VALUES ";
                 for (let j = 0; j < result.length; j++) {
                     let rand = Math.random();
                     if (rand > 0.6) {
-                        rand = Math.floor(Math.random() * (result.length));
-                        while (rand === j) {
+                        let maxNumber = result.length > 20 ? 20 : result.length;
+                        let maxFollow = Math.floor(Math.random() * maxNumber);
+                        let alreadyFollowed = [];
+                        alreadyFollowed.push(result[j].idperson);
+                        for (let k = 0; k < maxFollow; k++) {
                             rand = Math.floor(Math.random() * (result.length));
+                            while (alreadyFollowed.includes(result[rand].idperson)) {
+                                rand = Math.floor(Math.random() * (result.length));
+                            }
+                            alreadyFollowed.push(result[rand].idperson);
+                            script += "(" + result[j].idperson + "," + result[rand].idperson + "),";
                         }
-                        script += "(" + result[j].idperson + "," + result[rand].idperson + ")";
                     }
                 }
+                console.log(script);
+                // delete last index of script
+                script = script.substring(0, script.length - 1);
                 await db.request(script, []);
             }
         }
