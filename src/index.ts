@@ -6,7 +6,11 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT;
 
-app.use(express.static('public'))
+const api = require('./api');
+
+app.use(express.static('public'));
+
+app.use('/api', api);
 
 app.get('/api/', (req: Request, res: Response) => {
   res.send('Express + TypeScript Server');
