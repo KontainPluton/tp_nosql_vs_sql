@@ -44,8 +44,9 @@ buttonSend.addEventListener("click", function(event) {
            batchQuantity: batchQuantity
        })
    })
-       .then(response => {
-           console.log(response);
-           responseInput.innerHtml = response.text();
-       })
+       .then((response) => response.json()
+           .then((data) => {
+               console.log(data);
+               responseInput.textContent = data.time;
+           }));
 });

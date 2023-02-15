@@ -24,23 +24,20 @@ router.get('/database/', (req: any, res: any) => {
     }
 });
 
-router.get('/query/', (req: any, res: any) => {
+router.get('/query/', async(req: any, res: any) => {
     let db: IDatabase = Database.getDatabase();
-    db.connect();
-    db.request("INSERT INTO Person (username) VALUES ('test')", [], (result: any) => {
-        console.log(result);
-        db.disconnect();
-        res.send("OK");
-    });
+    await db.connect();
+    await db.request("INSERT INTO Person (username) VALUES ('test')", []);
+    await db.disconnect();
+    res.send("OK");
 });
 
 router.get('/query2/', async(req: any, res: any) => {
     let db: IDatabase = Database.getDatabase();
     await db.connect();
-    db.request("SELECT * from Person", [], (result: any) => {
-        res.send(result);
-        db.disconnect();
-    });
+    let result = await db.request("SELECT COUNT(*) from Person", []);
+    res.send(result);
+    await db.disconnect();
 });
 
 module.exports = router;

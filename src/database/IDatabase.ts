@@ -17,5 +17,5 @@ export class Database {
 export interface IDatabase {
     connect(): Promise<void>;
     disconnect(): Promise<void>;
-    request(query: string, args: any[], callback: any): Promise<any>;
+    request(query: string, args: any[]): Promise<any>;
 }

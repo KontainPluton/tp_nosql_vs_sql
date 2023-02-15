@@ -25,19 +25,12 @@ export class Neo4j implements IDatabase {
         await this.driver.close();
     }
 
-    async request(query: string, args: any[], callback: any): Promise<any> {
+    async request(query: string, args: any[]): Promise<any> {
         let session: Session = this.driver.session();
 
-        await session.run(query, args)
-            .then((result: any) => {
-                callback(result);
-            })
-            .catch((error: any) => {
-                console.log(error);
-            })
-            .finally(() => {
-                session.close();
-            });
+        let result = await session.run(query, args)
+        await session.close();
+        return result.records;
     }
 
 
