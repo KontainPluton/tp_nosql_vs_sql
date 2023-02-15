@@ -10,6 +10,8 @@ const api = require('./api');
 
 app.use(express.static('public'));
 
+app.use(express.json())
+
 app.use('/api', api);
 
 app.get('/api/', (req: Request, res: Response) => {
