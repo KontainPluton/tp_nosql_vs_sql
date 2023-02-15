@@ -11,11 +11,11 @@ router.get('/', (req: any, res: any) => {
 
 router.get('/database/', (req: any, res: any) => {
     if (req.query.name === 'neo4j') {
-        // db = new Neo4j();
+        db = new Neo4j("localhost:7474", "neo4j", "neo4j");
         res.send("Changement de la bdd courante en neo4j validé");
     }
     else if (req.query.name === 'postgree') {
-        // db = new Postgree();
+        db = new Postgree("localhost", 5432, "postgres", "postgres");
         res.send("Changement de la bdd courante en postgree validé");
     }
     else {
