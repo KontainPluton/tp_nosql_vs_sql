@@ -6,7 +6,11 @@ export class GenerateScript {
         let db: IDatabase = Database.getDatabase();
         let time: number = new Date().getTime();
         await db.connect();
-        for (let i = 0; i < insertQuantity; i+= batchQuantity) {
+
+        let maxId: number = await db.request("SELECT MAX(idperson) FROM Person", []);
+        insertQuantity += maxId;
+
+        for (let i = maxId; i < insertQuantity; i+= batchQuantity) {
             let script: string = "INSERT INTO Person (username) VALUES ";
             for (let j = 0; j < batchQuantity && i + j < insertQuantity; j++) {
                 script += "('Person " + i + "')";
@@ -18,6 +22,7 @@ export class GenerateScript {
             let result = await db.request(script, []);
 
             if (batchQuantity > 1) {
+                script = "INSERT INTO Follow (idFollower, idFollowed) VALUES ";
                 for (let j = 0; j < result.length; j++) {
                     let rand = Math.random();
                     if (rand > 0.6) {
@@ -25,9 +30,10 @@ export class GenerateScript {
                         while (rand === j) {
                             rand = Math.floor(Math.random() * (result.length));
                         }
-                        await db.request("INSERT INTO Follow (idFollower, idFollowed) VALUES (" + result[j].idperson + "," + result[j].idperson + ")", []);
+                        script += "(" + result[j].idperson + "," + result[rand].idperson + ")";
                     }
                 }
+                await db.request(script, []);
             }
         }
         await db.disconnect();
