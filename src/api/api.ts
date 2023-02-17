@@ -31,7 +31,7 @@ router.post('/database/', (req: any, res: any) => {
             Database.setDatabase(new Neo4j(`${env.URL_NEO4J!}:${env.PORT_NEO4J!}`, env.USER_NEO4J!, env.PASSWORD_NEO4J!));
             res.send("Changement de la bdd courante en neo4j validé");
         }
-        else if (req.query.database === 'postgres') {
+        else if (req.body.database === 'postgres') {
             Database.setGenerateScript(new GeneratePostgres());
             Database.setDatabase(new Postgres(env.URL_POSTGRES!, env.DB_POSTGRES!, parseInt(env.PORT_POSTGRES!), 
                                               env.USER_POSTGRES!, env.PASSWORD_POSTGRES!));

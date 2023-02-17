@@ -48,6 +48,7 @@ export class GeneratePostgres implements IGenerate {
                 await db.request(script, []);
             }
         }
+
         await db.disconnect();
         let endTime: number = new Date().getTime();
         return endTime - time;
@@ -57,6 +58,13 @@ export class GeneratePostgres implements IGenerate {
         let db: IDatabase = Database.getDatabase();
         let time: number = new Date().getTime();
         await db.connect();
+
+        let result = await db.request("SELECT MAX(idproduct) FROM Product", []);
+        if (result.max == null) {
+            result.max = 0;
+        }
+        insertQuantity += result.max;
+
         for (let i = 0; i < insertQuantity; i+= batchQuantity) {
             let script: string = "INSERT INTO Person (username) VALUES ";
             for (let j = 0; j < batchQuantity && i + j < insertQuantity; j++) {
@@ -68,6 +76,35 @@ export class GeneratePostgres implements IGenerate {
             script += " RETURNING idproduct";
             await db.request(script, []);
         }
+
+        await db.disconnect();
+        let endTime: number = new Date().getTime();
+        return endTime - time;
+    }
+
+    public async generatePurchase(insertQuantity: number, batchQuantity: number): Promise<number> {
+        let db: IDatabase = Database.getDatabase();
+        let time: number = new Date().getTime();
+        await db.connect();
+
+        let result = await db.request("SELECT MAX(idPurchase) FROM Purchase", []);
+        if (result.max == null) {
+            result.max = 0;
+        }
+        insertQuantity += result.max;
+
+        for (let i = 0; i < insertQuantity; i+= batchQuantity) {
+            let script: string = "INSERT INTO Purchase (username) VALUES ";
+            for (let j = 0; j < batchQuantity && i + j < insertQuantity; j++) {
+                script += "('Product " + i + "','A-" + i + "')";
+                if (j + 1 < batchQuantity) {
+                    script += ",";
+                }
+            }
+            script += " RETURNING idproduct";
+            await db.request(script, []);
+        }
+
         await db.disconnect();
         let endTime: number = new Date().getTime();
         return endTime - time;
@@ -86,21 +123,6 @@ export class GeneratePostgres implements IGenerate {
 
         await db.request(request, []);
 
-        /*for (let i = 0; i < insertQuantity; i+= batchQuantity) {
-
-            let script: string = "INSERT INTO Person (username) VALUES ";
-
-            for (let j = 0; j < batchQuantity && i + j < insertQuantity; j++) {
-                script += "('Person " + i + "')";
-                if (j + 1 < batchQuantity) {
-                    script += ",";
-                }
-            }
-
-
-
-            await db.request(script, []);
-        }*/
         await db.disconnect();
         let endTime: number = new Date().getTime();
         return endTime - time;

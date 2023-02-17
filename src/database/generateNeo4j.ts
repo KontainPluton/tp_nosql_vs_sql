@@ -57,6 +57,10 @@ export class GenerateNeo4j implements IGenerate {
         return endTime - time;
     }
 
+    generatePurchase(insertQuantity: number, batchQuantity: number): Promise<number> {
+        throw new Error("Method not implemented.");
+    }
+
     // purge table person
     public async purgePerson(): Promise<void>{
         let db: IDatabase = Database.getDatabase();
