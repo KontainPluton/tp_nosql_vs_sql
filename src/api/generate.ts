@@ -13,8 +13,11 @@ router.post('/', async(req: any, res: any) => {
         let time = await Database.getGenerateScript().generateProduct(req.body.insertQuantity, req.body.batchQuantity);
         res.json({time: time});
     }
+    else if (req.body.table === 'purchase') {
+        let time = await Database.getGenerateScript().generatePurchase(req.body.insertQuantity, req.body.batchQuantity);
+        res.json({time: time});
+    }
     else {
-        console.log("Erreur");
         res.send("Le type " + req.body.type + " n'existe pas");
     }
 });

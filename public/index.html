@@ -28,19 +28,19 @@
         <div class="col-md-8 offset-md-2">
             <form>
                 <div class="d-flex justify-content-md-center align-items-md-center">
-                    <div class="dropdown border rounded-0"><button class="btn btn-light btn-sm dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">TABLE</button>
-                        <div class="dropdown-menu font-monospace fs-6" id="dropdown-table" style="background: linear-gradient(#ffb3ea, white);"><a class="dropdown-item" id="dropdown-item-person" href="#">Person</a><a class="dropdown-item" id="dropdown-item-order" href="#">Order</a><a class="dropdown-item" id="dropdown-item-product" href="#">Product</a></div>
+                    <div class="dropdown border rounded-0"><button class="btn btn-light btn-sm dropdown-toggle" id="dropdown-table-title" aria-expanded="false" data-bs-toggle="dropdown" type="button">TABLE</button>
+                        <div class="dropdown-menu font-monospace fs-6" id="dropdown-table" style="background: linear-gradient(#ffb3ea, white);"><a class="dropdown-item" id="dropdown-item-person" href="#">Person</a><a class="dropdown-item" id="dropdown-item-purchase" href="#">Purchase</a><a class="dropdown-item" id="dropdown-item-product" href="#">Product</a></div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-md-center align-items-md-center" style="margin-top: 5px;"><input class="form-control form-control-sm d-md-flex" type="number" id="input-number-insert" min="1" max="1000000" step="1" placeholder="Nombre d'insertions" name="nbInsert"></div>
                 <div class="d-flex justify-content-md-center align-items-md-center" style="margin-top: 5px;">
-                    <div class="dropdown border rounded-0"><button class="btn btn-light btn-sm dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">BATCH</button>
+                    <div class="dropdown border rounded-0"><button class="btn btn-light btn-sm dropdown-toggle" id="dropdown-batch-title" aria-expanded="false" data-bs-toggle="dropdown" type="button">BATCH</button>
                         <div class="dropdown-menu font-monospace fs-6" id="dropdown-batch" style="background: radial-gradient(#ffb3ea 27%, white 86%);"><a class="dropdown-item" id="dropdown-item-1" href="#">1</a><a class="dropdown-item" id="dropdown-item-10" href="#">10</a><a class="dropdown-item" id="dropdown-item-100" href="#">100</a><a class="dropdown-item" id="dropdown-item-1000" href="#">1 000</a><a class="dropdown-item" id="dropdown-item-10000" href="#">10 000</a><a class="dropdown-item" id="dropdown-item-100000" href="#">100 000</a><a class="dropdown-item" id="dropdown-item-1000000" href="#">1 000 000</a></div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-md-center align-items-md-center" style="margin-top: 5px;">
                     <button class="btn btn-light btn-sm" id="button-send" type="button" style="background: linear-gradient(106deg, rgb(255,179,234) 19%, rgb(229,83,189) 99%), rgb(255,179,234);color: rgb(0,0,0);">Envoyer</button>
-                    <button class="btn btn-light btn-sm" id="button-purge" type="button" style="background: linear-gradient(106deg, rgb(255,179,234) 19%, rgb(229,83,189) 99%), rgb(255,179,234);color: rgb(0,0,0);">Purger table sélectionnée</button>
+                    <button class="btn btn-light btn-sm" id="button-purge" type="button" style="background: linear-gradient(106deg, rgb(255,179,234) 19%, rgb(229,83,189) 99%), rgb(255,179,234);color: rgb(0,0,0);">Purger</button>
                 </div>
             </form>
         </div>

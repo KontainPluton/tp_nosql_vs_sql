@@ -7,31 +7,24 @@ export class GenerateNeo4j implements IGenerate {
         let time: number = new Date().getTime();
         await db.connect();
 
-        let data = {batch: [{name:"Alice",age:32},{name:"Bob",age:42}]};
-
-        let request = "UNWIND $batch as row" + 
-                      "CREATE (n:Label)" + 
-                      "SET n += row";
-
-        console.log(request);
-
-        await db.request(request, [data]);
-
-        /*for (let i = 0; i < insertQuantity; i+= batchQuantity) {
-
-            let script: string = "INSERT INTO Person (username) VALUES ";
-
+        for (let i = 0; i < insertQuantity; i+= batchQuantity) {
+            let data: { batch: { name: string }[]} = {batch: []};
             for (let j = 0; j < batchQuantity && i + j < insertQuantity; j++) {
-                script += "('Person " + i + "')";
-                if (j + 1 < batchQuantity) {
-                    script += ",";
-                }
+                let obj: { name: string } = {name: "Person " + (i + j)};
+                data.batch.push(obj);
             }
 
+            let request = "UNWIND $batch as row " +
+                "CREATE (n:Person) " +
+                "SET n += row " +
+                "RETURN n";
 
+            let result = await db.request(request, data);
+            result.map((element: any) => {
+                console.log(element.get("n"));
+            });
+        }
 
-            await db.request(script, []);
-        }*/
         await db.disconnect();
         let endTime: number = new Date().getTime();
         return endTime - time;
@@ -69,5 +62,12 @@ export class GenerateNeo4j implements IGenerate {
         await db.request("DELETE FROM Person", []);
         await db.request("ALTER SEQUENCE Person_idperson_seq RESTART WITH 1", []);
         await db.disconnect();
+    }
+
+    purgeProduct(): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    purgePurchase(): Promise<void> {
+        throw new Error("Method not implemented.");
     }
 }

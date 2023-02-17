@@ -1,7 +1,9 @@
 let switchDatabse = document.getElementById("switch-database");
 let databaseLabel = document.getElementById("database-label");
 let dropdownTable = document.getElementById("dropdown-table");
+let dropDownTableTitle = document.getElementById("dropdown-table-title");
 let dropdownBatch = document.getElementById("dropdown-batch");
+let dropdownBatchTitle = document.getElementById("dropdown-batch-title");
 let inputNumberInsert = document.getElementById("input-number-insert");
 let responseInput = document.getElementById("response-time");
 let buttonSend = document.getElementById("button-send");
@@ -59,15 +61,13 @@ switchDatabse.addEventListener("change", function(event) {
 });
 
 dropdownTable.addEventListener("click", function(event) {
-    console.log("dropdown-table clicked");
-    console.log(event.target);
     table = event.target.id.split("-")[2];
+    dropDownTableTitle.textContent = table.charAt(0).toUpperCase() + table.slice(1);;
 });
 
 dropdownBatch.addEventListener("click", function(event) {
-    console.log("dropdown-batch clicked");
-    console.log(event.target);
     batchQuantity = parseInt(event.target.id.split("-")[2]);
+    dropdownBatchTitle.textContent = batchQuantity;
 });
 
 buttonSend.addEventListener("click", function(event) {
