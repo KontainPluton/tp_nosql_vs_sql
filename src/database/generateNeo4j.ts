@@ -178,6 +178,10 @@ export class GenerateNeo4j implements IGenerate {
         return "";
     }
 
+    public async findNumberOfAProductInFollowGroup(depth: number, username: string, reference: string): Promise<any> {
+        throw new Error("not Implemented");
+    }
+
     // purge table person
     public async purgePerson(): Promise<void>{
         let db: IDatabase = Database.getDatabase();
