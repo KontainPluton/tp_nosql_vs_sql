@@ -69,7 +69,7 @@ export class GeneratePostgres implements IGenerate {
         for (let i = 0; i < insertQuantity; i+= batchQuantity) {
             let script: string = "INSERT INTO Product (productName, reference) VALUES ";
             for (let j = 0; j < batchQuantity && i + j < insertQuantity; j++) {
-                script += "('Product " + i + "','A-" + i + "')";
+                script += "('Product " + (i + j) + "','A-" + (i + j) + "')";
                 if (j + 1 < batchQuantity) {
                     script += ",";
                 }
