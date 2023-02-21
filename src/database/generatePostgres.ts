@@ -163,18 +163,23 @@ export class GeneratePostgres implements IGenerate {
                                         "INNER JOIN PERSON p2 ON p2.idPerson = f.idFollower " +
                                         "WHERE p1.username = $1::text", [username]);*/
                                         
-        let products = await db.request("WITH RECURSIVE followers (root, parent, depth) AS ( " + 
-                                        "SELECT p1.idPerson, p1.username " +
+        let products = await db.request("WITH RECURSIVE followers (idPerson, username, depth, is_cycle, path) AS ( " + 
+                                        "SELECT p1.idPerson, p1.username, 1, false, ARRAY[p1.idPerson] " +
                                         "FROM PERSON p1 " + 
                                         "WHERE p1.username = $1::text " +
-                                        "UNION " +
-                                        "SELECT p2.idPerson, p2.username, depth+1" + 
+                                        "UNION ALL " +
+                                        "SELECT p2.idPerson, p2.username, depth+1, p2.idPerson = ANY(path), path || p2.idPerson " + 
                                         "FROM PERSON p2 " +
                                         "INNER JOIN FOLLOW f ON f.idFollower = p2.idPerson " +
-                                        "INNER JOIN followers ON followers.idPerson = f.idFollowed) " +
-                                        "WHERE depth < 3 " +
-                                    "SELECT * " +
-                                    "FROM followers", [username]);                                
+                                        "INNER JOIN followers ON followers.idPerson = f.idFollowed " +
+                                        "WHERE depth < $2 AND NOT is_cycle ) " +
+                                    "SELECT reference, COUNT(1) " +
+                                    "FROM followers f " + 
+                                    "INNER JOIN PURCHASE pur ON pur.idPerson = f.idPerson " + 
+                                    "INNER JOIN PURCHASE_CONTENT purCt ON purCt.idPurchase = pur.idPurchase " + 
+                                    "INNER JOIN PRODUCT pro ON pro.idProduct = purCt.idProduct " +
+                                    "GROUP BY reference "
+                                    , [username,depth]);                                
 
         await db.disconnect();
         let endTime: number = new Date().getTime();
