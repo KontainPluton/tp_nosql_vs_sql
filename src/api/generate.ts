@@ -22,6 +22,11 @@ router.post('/', async(req: any, res: any) => {
     }
 });
 
+router.get('/listProduct', async(req: any, res: any) => {
+    let result = await Database.getGenerateScript().findProductsInFollowGroup(req.query.depth, req.query.username);
+    res.json({result: result});
+});
+
 router.delete('/', async(req: any, res: any) => {
     if (req.body.table === 'person') {
         await Database.getGenerateScript().purgePerson();

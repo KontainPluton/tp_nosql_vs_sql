@@ -3,6 +3,11 @@ import { IGenerate } from './IGenerate';
 import {random, randomDate, randomInt} from "../utils/utils";
 
 export class GeneratePostgres implements IGenerate {
+
+    //============================================================
+    // INSERTS / GENERATE
+    //============================================================
+
     public async generatePerson(insertQuantity: number, batchQuantity: number): Promise<number>{
         let db: IDatabase = Database.getDatabase();
         let time: number = new Date().getTime();
@@ -69,7 +74,7 @@ export class GeneratePostgres implements IGenerate {
         for (let i = 0; i < insertQuantity; i+= batchQuantity) {
             let script: string = "INSERT INTO Product (productName, reference) VALUES ";
             for (let j = 0; j < batchQuantity && i + j < insertQuantity; j++) {
-                script += "('Product " + i + "','A-" + i + "')";
+                script += "('Product " + (i+j) + "','A-" + (i+j) + "')";
                 if (j + 1 < batchQuantity) {
                     script += ",";
                 }
@@ -136,27 +141,51 @@ export class GeneratePostgres implements IGenerate {
         let endTime: number = new Date().getTime();
         return endTime - time;
     }
+    
+    //============================================================
+    // SELECTS / FIND
+    //============================================================
 
-    public static async generatePersonNoSQL(insertQuantity: number, batchQuantity: number): Promise<number>{
+    public async findProductsInFollowGroup(depth: number, username: string): Promise<string> {
         let db: IDatabase = Database.getDatabase();
         let time: number = new Date().getTime();
         await db.connect();
 
-        let data = [{name:"Alice",age:32},{name:"Bob",age:42}];
+        /*let products = await db.request("SELECT reference, COUNT(1) " + 
+                                        "FROM PRODUCT " + 
+                                        "INNER JOIN PURCHASE_CONTENT ON PRODUCT.idProduct = PURCHASE_CONTENT.idProduct " +
+                                        "INNER JOIN PURCHASE ON PURCHASE_CONTENT.idPurchase = PURCHASE.idPurchase " + 
+                                        "GROUP BY reference ", []);*/
 
-        let request = data + "UNWIND $batch as row" + 
-                      "CREATE (n:Label)" + 
-                      "SET n += row";
-
-        await db.request(request, []);
+        /*let products = await db.request("SELECT p2.idPerson, p2.username " + 
+                                        "FROM PERSON p1 " + 
+                                        "INNER JOIN FOLLOW f ON p1.idPerson = f.idFollowed " +
+                                        "INNER JOIN PERSON p2 ON p2.idPerson = f.idFollower " +
+                                        "WHERE p1.username = $1::text", [username]);*/
+                                        
+        let products = await db.request("WITH RECURSIVE followers (root, parent, depth) AS ( " + 
+                                        "SELECT p1.idPerson, p1.username " +
+                                        "FROM PERSON p1 " + 
+                                        "WHERE p1.username = $1::text " +
+                                        "UNION " +
+                                        "SELECT p2.idPerson, p2.username, depth+1" + 
+                                        "FROM PERSON p2 " +
+                                        "INNER JOIN FOLLOW f ON f.idFollower = p2.idPerson " +
+                                        "INNER JOIN followers ON followers.idPerson = f.idFollowed) " +
+                                        "WHERE depth < 3 " +
+                                    "SELECT * " +
+                                    "FROM followers", [username]);                                
 
         await db.disconnect();
         let endTime: number = new Date().getTime();
-        return endTime - time;
+        //return endTime - time;
+        return products;
     }
 
+    //============================================================
+    // DELETES / PURGE
+    //============================================================
 
-    // purge table person
     public async purgePerson(): Promise<void>{
         let db: IDatabase = Database.getDatabase();
         await db.connect();

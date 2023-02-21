@@ -54,6 +54,10 @@ export class GenerateNeo4j implements IGenerate {
         throw new Error("Method not implemented.");
     }
 
+    public async findProductsInFollowGroup(depth: number, username: string): Promise<string> {
+        throw new Error("not Implemented");
+    }
+
     // purge table person
     public async purgePerson(): Promise<void>{
         let db: IDatabase = Database.getDatabase();

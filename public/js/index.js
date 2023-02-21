@@ -30,7 +30,7 @@ fetch('http://localhost:3000/api/database', {
             switchDatabse.checked = false;
             databaseLabel.textContent = "postgres";
         }
-    });
+});
 
 switchDatabse.addEventListener("change", function(event) {
     let database;

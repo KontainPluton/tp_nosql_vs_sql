@@ -35,3 +35,38 @@ CREATE TABLE IF NOT EXISTS PURCHASE_CONTENT (
     CONSTRAINT fk_purchase_content_product FOREIGN KEY (idProduct) REFERENCES PRODUCT(idProduct),
     CONSTRAINT fk_purchase_content_order FOREIGN KEY (idPurchase) REFERENCES PURCHASE(idPurchase)
 );  
+
+SELECT reference, COUNT(1)
+FROM PRODUCT
+INNER JOIN PURCHASE_CONTENT ON PRODUCT.idProduct = PURCHASE_CONTENT.idProduct
+INNER JOIN PURCHASE ON PURCHASE_CONTENT.idPurchase = PURCHASE.idPurchase
+GROUP BY reference
+
+SELECT p2.idPerson, p2.username 
+FROM PERSON p1
+INNER JOIN FOLLOW f ON p1.idPerson = f.idFollowed
+INNER JOIN PERSON p2 ON p2.idPerson = f.idFollower
+WHERE p1.idPerson = 2;
+
+WITH RECURSIVE followers AS (
+	SELECT
+	    idPerson,
+		username
+	FROM
+		PERSON p1  
+	WHERE
+		p1.username = 'Person 98'
+        
+	UNION
+		SELECT
+            idPerson,
+            username
+		FROM
+			PERSON p2 
+        INNER JOIN FOLLOW f ON f.idFollower = p2.idPerson
+		INNER JOIN followers ON followers.idPerson = f.idFollowed
+)
+SELECT
+	*
+FROM
+	followers;
