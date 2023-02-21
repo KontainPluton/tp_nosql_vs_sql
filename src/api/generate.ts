@@ -24,7 +24,12 @@ router.post('/', async(req: any, res: any) => {
 
 router.get('/listProduct', async(req: any, res: any) => {
     let result = await Database.getGenerateScript().findProductsInFollowGroup(req.query.depth, req.query.username);
-    res.json({result: result});
+    res.json(result);
+});
+
+router.get('/listOfAProduct', async(req: any, res: any) => {
+    let result = await Database.getGenerateScript().findNumberOfAProductInFollowGroup(req.query.depth, req.query.username, req.query.reference);
+    res.json(result);
 });
 
 router.delete('/', async(req: any, res: any) => {

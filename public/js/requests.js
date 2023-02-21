@@ -1,9 +1,17 @@
 let switchDatabse = document.getElementById("switch-database");
 let databaseLabel = document.getElementById("database-label");
 
+let textareaJson = document.getElementById("textarea-json");
+let responseInput = document.getElementById("response-time");
+
 let depthRequest1 = document.getElementById("input-depht-request-1");
 let usernameRequest1 = document.getElementById("input-username-request-1");
 let buttonRequest1 = document.getElementById("button-request-1");
+
+let depthRequest2 = document.getElementById("input-depht-request-2");
+let usernameRequest2 = document.getElementById("input-username-request-2");
+let productRequest2 = document.getElementById("input-product-request-2");
+let buttonRequest2 = document.getElementById("button-request-2");
 
 // init switch database
 fetch('http://localhost:3000/api/database', {
@@ -78,6 +86,43 @@ buttonRequest1.addEventListener("click", function(event) {
     })
     .then((response) => response.json()
         .then((data) => {
-            console.log(data);
+            textareaJson.textContent = JSON.stringify(data.result, null, "\t");
+            responseInput.textContent = data.time;
+    }));
+ });
+
+ buttonRequest2.addEventListener("click", function(event) {
+    console.log("button-request-2 clicked");
+ 
+    if (depthRequest2.value === "" || depthRequest2.value === null || depthRequest2.value === undefined) {
+        alert("Please enter a depth");
+        return;
+    }
+    let depth = parseInt(depthRequest2.value);
+    if (depth <= 0) {
+        alert("Please enter a depth (>=1)");
+        return;
+    }
+
+    if (usernameRequest2.value === "" || usernameRequest2.value === null || usernameRequest2.value === undefined) {
+        alert("Please enter a username");
+        return;
+    }
+ 
+    if (productRequest2.value === "" || productRequest2.value === null || productRequest2.value === undefined) {
+        alert("Please enter a reference");
+        return;
+    }
+
+    fetch(`http://localhost:3000/api/generate/listOfAProduct?depth=${depth}&username=${usernameRequest2.value}&reference=${productRequest2.value}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then((response) => response.json()
+        .then((data) => {
+            textareaJson.textContent = JSON.stringify(data.result, null, "\t");
+            responseInput.textContent = data.time;
     }));
  });

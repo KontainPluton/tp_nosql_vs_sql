@@ -152,7 +152,11 @@ export class GenerateNeo4j implements IGenerate {
         return endTime - time;
     }
 
-    public async findProductsInFollowGroup(depth: number, username: string): Promise<string> {
+    public async findProductsInFollowGroup(depth: number, username: string): Promise<any> {
+        throw new Error("not Implemented");
+    }
+
+    public async findNumberOfAProductInFollowGroup(depth: number, username: string, reference: string): Promise<any> {
         throw new Error("not Implemented");
     }
 

@@ -146,24 +146,12 @@ export class GeneratePostgres implements IGenerate {
     // SELECTS / FIND
     //============================================================
 
-    public async findProductsInFollowGroup(depth: number, username: string): Promise<string> {
+    public async findProductsInFollowGroup(depth: number, username: string): Promise<any> {
         let db: IDatabase = Database.getDatabase();
         let time: number = new Date().getTime();
         await db.connect();
-
-        /*let products = await db.request("SELECT reference, COUNT(1) " + 
-                                        "FROM PRODUCT " + 
-                                        "INNER JOIN PURCHASE_CONTENT ON PRODUCT.idProduct = PURCHASE_CONTENT.idProduct " +
-                                        "INNER JOIN PURCHASE ON PURCHASE_CONTENT.idPurchase = PURCHASE.idPurchase " + 
-                                        "GROUP BY reference ", []);*/
-
-        /*let products = await db.request("SELECT p2.idPerson, p2.username " + 
-                                        "FROM PERSON p1 " + 
-                                        "INNER JOIN FOLLOW f ON p1.idPerson = f.idFollowed " +
-                                        "INNER JOIN PERSON p2 ON p2.idPerson = f.idFollower " +
-                                        "WHERE p1.username = $1::text", [username]);*/
                                         
-        let products = await db.request("WITH RECURSIVE followers (idPerson, username, depth, is_cycle, path) AS ( " + 
+        let result = await db.request("WITH RECURSIVE followers (idPerson, username, depth, is_cycle, path) AS ( " + 
                                         "SELECT p1.idPerson, p1.username, 1, false, ARRAY[p1.idPerson] " +
                                         "FROM PERSON p1 " + 
                                         "WHERE p1.username = $1::text " +
@@ -183,8 +171,37 @@ export class GeneratePostgres implements IGenerate {
 
         await db.disconnect();
         let endTime: number = new Date().getTime();
-        //return endTime - time;
-        return products;
+        let resultTime = endTime - time;
+        return {result: result, time: resultTime};
+    }
+
+    public async findNumberOfAProductInFollowGroup(depth: number, username: string, reference: string): Promise<any> {
+        let db: IDatabase = Database.getDatabase();
+        let time: number = new Date().getTime();
+        await db.connect();
+                                        
+        let result = await db.request("WITH RECURSIVE followers (idPerson, username, depth, is_cycle, path) AS ( " + 
+                                        "SELECT p1.idPerson, p1.username, 1, false, ARRAY[p1.idPerson] " +
+                                        "FROM PERSON p1 " + 
+                                        "WHERE p1.username = $1::text " +
+                                        "UNION ALL " +
+                                        "SELECT p2.idPerson, p2.username, depth+1, p2.idPerson = ANY(path), path || p2.idPerson " + 
+                                        "FROM PERSON p2 " +
+                                        "INNER JOIN FOLLOW f ON f.idFollower = p2.idPerson " +
+                                        "INNER JOIN followers ON followers.idPerson = f.idFollowed " +
+                                        "WHERE depth < $2 AND NOT is_cycle ) " +
+                                    "SELECT COUNT(1) " +
+                                    "FROM followers f " + 
+                                    "INNER JOIN PURCHASE pur ON pur.idPerson = f.idPerson " + 
+                                    "INNER JOIN PURCHASE_CONTENT purCt ON purCt.idPurchase = pur.idPurchase " + 
+                                    "INNER JOIN PRODUCT pro ON pro.idProduct = purCt.idProduct " +
+                                    "WHERE reference = $3"
+                                    , [username,depth,reference]);                                
+
+        await db.disconnect();
+        let endTime: number = new Date().getTime();
+        let resultTime = endTime - time;
+        return {result: result, time: resultTime};
     }
 
     //============================================================
