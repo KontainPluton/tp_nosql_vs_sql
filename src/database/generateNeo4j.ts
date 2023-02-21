@@ -101,7 +101,9 @@ export class GenerateNeo4j implements IGenerate {
             let result = await db.request(request, data);
 
             request = "MATCH (n1:Person) " +
+                "WITH n1, rand() as r " +
                 "RETURN n1 " +
+                "ORDER BY r " +
                 "LIMIT 5000";
             let persons = await db.request(request, null);
 
@@ -122,7 +124,9 @@ export class GenerateNeo4j implements IGenerate {
             await db.request(request, data2);
 
             request = "MATCH (n1:Product) " +
+                "WITH n1, rand() as r " +
                 "RETURN n1 " +
+                "ORDER BY r " +
                 "LIMIT 5000";
             let products = await db.request(request, null);
 
@@ -153,23 +157,45 @@ export class GenerateNeo4j implements IGenerate {
     }
 
     public async findProductsInFollowGroup(depth: number, username: string): Promise<string> {
-        throw new Error("not Implemented");
+        let db: IDatabase = Database.getDatabase();
+        let time: number = new Date().getTime();
+        await db.connect();
+
+        let request = "MATCH (person1:Person { name:\"" + username + "\"})-[:follow *1.." + depth + "]->(follower:Person) " +
+            "WITH DISTINCT follower " +
+            "MATCH (follower)-[:ordered]->(order:Purchase) " +
+            "MATCH (order)-[c:contains]->(product:Product) " +
+            "RETURN follower.name, product.productName, c.quantity " +
+            "ORDER BY follower.name";
+
+        console.log(request);
+
+        let result = await db.request(request, null);
+        await db.disconnect();
+        let endTime: number = new Date().getTime();
+        console.log(result);
+        console.log(endTime - time);
+        return "";
     }
 
     // purge table person
     public async purgePerson(): Promise<void>{
         let db: IDatabase = Database.getDatabase();
         await db.connect();
-        await db.request("DELETE FROM Follow", []);
-        await db.request("DELETE FROM Person", []);
-        await db.request("ALTER SEQUENCE Person_idperson_seq RESTART WITH 1", []);
+        await db.request("MATCH (n:Person) DETACH delete n", null);
         await db.disconnect();
     }
 
-    purgeProduct(): Promise<void> {
-        throw new Error("Method not implemented.");
+    public async purgeProduct(): Promise<void> {
+        let db: IDatabase = Database.getDatabase();
+        await db.connect();
+        await db.request("MATCH (n:Product) DETACH delete n", null);
+        await db.disconnect();
     }
-    purgePurchase(): Promise<void> {
-        throw new Error("Method not implemented.");
+    public async purgePurchase(): Promise<void> {
+        let db: IDatabase = Database.getDatabase();
+        await db.connect();
+        await db.request("MATCH (n:Purchase) DETACH delete n", null);
+        await db.disconnect();
     }
 }
