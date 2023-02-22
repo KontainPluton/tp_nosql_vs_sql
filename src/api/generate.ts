@@ -22,6 +22,16 @@ router.post('/', async(req: any, res: any) => {
     }
 });
 
+router.post('/tpData', async(req: any, res: any) => {
+    let times = await Database.getGenerateScript().generateTPData();
+    res.json({times: times});
+});
+
+router.post('/testData', async(req: any, res: any) => {
+    let times = await Database.getGenerateScript().generateTestData();
+    res.json({times: times});
+});
+
 router.get('/listProduct', async(req: any, res: any) => {
     let result = await Database.getGenerateScript().findProductsInFollowGroup(req.query.depth, req.query.username);
     res.json(result);
