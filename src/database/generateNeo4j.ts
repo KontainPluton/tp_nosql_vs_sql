@@ -168,8 +168,6 @@ export class GenerateNeo4j implements IGenerate {
             "RETURN follower.name, product.productName, c.quantity " +
             "ORDER BY follower.name";
 
-        console.log(request);
-
         let result = await db.request(request, null);
         await db.disconnect();
         let endTime: number = new Date().getTime();
@@ -179,7 +177,23 @@ export class GenerateNeo4j implements IGenerate {
     }
 
     public async findNumberOfAProductInFollowGroup(depth: number, username: string, reference: string): Promise<any> {
-        throw new Error("not Implemented");
+        let db: IDatabase = Database.getDatabase();
+        let time: number = new Date().getTime();
+        await db.connect();
+
+        let request = "MATCH (person1:Person { name:\"" + username + "\"})-[:follow *1.." + depth + "]->(follower:Person) " +
+            "WITH DISTINCT follower " +
+            "MATCH (follower)-[:ordered]->(order:Purchase) " +
+            "MATCH (order)-[c:contains]->(product:Product {reference: \"" + reference + "\") " +
+            "RETURN follower.name, c.quantity " +
+            "ORDER BY follower.name";
+
+        let result = await db.request(request, null);
+        await db.disconnect();
+        let endTime: number = new Date().getTime();
+        console.log(result);
+        console.log(endTime - time);
+        return "";
     }
 
     // purge table person
