@@ -22,7 +22,8 @@ export class GeneratePostgres implements IGenerate {
         let time: number = new Date().getTime();
         await db.connect();
 
-        let persons: { username: string, id: number|null, follow: (number|null)[], idOrder: number|null, ordered: (number|null)[]}[] = [
+        let persons: { username: string, id: number|null, follow: (number|null)[], 
+            idOrder: number|null, ordered: {idProduct: (number|null), quantity: number}[]}[] = [
              {"username":"Influenceur", "id":null, "follow":[], "ordered":[], "idOrder": null},
 
              {"username":"P1", "id":null, "follow":[], "ordered":[], "idOrder": null},
@@ -133,29 +134,29 @@ export class GeneratePostgres implements IGenerate {
         }
 
         //Links - Purchase
-        persons[0].ordered.push(products[0].id, products[2].id); //Influenceur
-        persons[1].ordered.push(products[0].id); //P1
-        persons[2].ordered.push(products[0].id, products[3].id); //P2
-        persons[3].ordered.push(products[2].id); //P3
+        persons[0].ordered.push({idProduct: products[0].id, quantity: 2}, {idProduct: products[2].id, quantity: 5}); //Influenceur
+        persons[1].ordered.push({idProduct: products[0].id, quantity: 1}); //P1
+        persons[2].ordered.push({idProduct: products[0].id, quantity: 3}, {idProduct: products[3].id, quantity: 2}); //P2
+        persons[3].ordered.push({idProduct: products[2].id, quantity: 6}); //P3
         persons[4].ordered.push(); //P4
-        persons[5].ordered.push(products[2].id); //P01
-        persons[6].ordered.push(products[0].id); //P02
-        persons[7].ordered.push(products[0].id, products[3].id); //P03
-        persons[8].ordered.push(products[0].id); //P04
-        persons[9].ordered.push(products[0].id); //P05
+        persons[5].ordered.push({idProduct: products[2].id, quantity: 1}); //P01
+        persons[6].ordered.push({idProduct: products[0].id, quantity: 3}); //P02
+        persons[7].ordered.push({idProduct: products[0].id, quantity: 4}, {idProduct: products[3].id, quantity: 1}); //P03
+        persons[8].ordered.push({idProduct: products[0].id, quantity: 1}); //P04
+        persons[9].ordered.push({idProduct: products[0].id, quantity: 2}); //P05
         persons[10].ordered.push(); //P06
-        persons[11].ordered.push(products[0].id, products[3].id); //P07
-        persons[12].ordered.push(products[0].id); //P08
-        persons[13].ordered.push(products[0].id); //P09
+        persons[11].ordered.push({idProduct: products[0].id, quantity: 1}, {idProduct: products[3].id, quantity: 1}); //P07
+        persons[12].ordered.push({idProduct: products[0].id, quantity: 2}); //P08
+        persons[13].ordered.push({idProduct: products[0].id, quantity: 1}); //P09
         persons[14].ordered.push(); //P001
-        persons[15].ordered.push(products[0].id); //P002
-        persons[16].ordered.push(products[0].id); //P0001
-        persons[17].ordered.push(products[0].id); //P0002
+        persons[15].ordered.push({idProduct: products[0].id, quantity: 1}); //P002
+        persons[16].ordered.push({idProduct: products[0].id, quantity: 2}); //P0001
+        persons[17].ordered.push({idProduct: products[0].id, quantity: 1}); //P0002
 
         script = "INSERT INTO Purchase_content (idProduct, idPurchase, quantity) VALUES ";
         persons.forEach((elem, idx, array) => {
             elem.ordered.forEach((elem2, idx2, array2) => {
-                script += "(" + elem2 + "," + elem.idOrder + ", " + 1 + ")";
+                script += "(" + elem2.idProduct + "," + elem.idOrder + ", " + elem2.quantity + ")";
                 if (idx2 < array2.length - 1) {
                     script += ",";
                 } 
@@ -331,7 +332,7 @@ export class GeneratePostgres implements IGenerate {
                                     "distinctFollowers AS ( " + 
                                         "SELECT DISTINCT f.idPerson, f.username " +
                                         "FROM followers f) " +
-                                    "SELECT reference, COUNT(1) " +
+                                    "SELECT reference, SUM(quantity) " +
                                     "FROM distinctFollowers df " + 
                                     "INNER JOIN PURCHASE pur ON pur.idPerson = df.idPerson " + 
                                     "INNER JOIN PURCHASE_CONTENT purCt ON purCt.idPurchase = pur.idPurchase " + 
@@ -363,7 +364,7 @@ export class GeneratePostgres implements IGenerate {
                                     "distinctFollowers AS ( " + 
                                         "SELECT DISTINCT f.idPerson, f.username " +
                                         "FROM followers f) " +
-                                    "SELECT COUNT(1) " +
+                                    "SELECT SUM(quantity) " +
                                     "FROM distinctFollowers df " + 
                                     "INNER JOIN PURCHASE pur ON pur.idPerson = df.idPerson " + 
                                     "INNER JOIN PURCHASE_CONTENT purCt ON purCt.idPurchase = pur.idPurchase " + 
