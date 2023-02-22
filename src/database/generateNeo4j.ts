@@ -27,9 +27,174 @@ export class GenerateNeo4j implements IGenerate {
     }
 
     public async generateTestData(): Promise<number[]> {
+        let persons = {batch: [
+            {username: "Influenceur"},
+            {username: "P1"},
+            {username: "P2"},
+            {username: "P3"},
+            {username: "P4"},
+            {username: "P01"},
+            {username: "P02"},
+            {username: "P03"},
+            {username: "P04"},
+            {username: "P05"},
+            {username: "P06"},
+            {username: "P07"},
+            {username: "P08"},
+            {username: "P09"},
+            {username: "P001"},
+            {username: "P002"},
+            {username: "P0001"},
+            {username: "P0002"},
+        ]}
+
+        let request = "UNWIND $batch as row " +
+            "CREATE (n1:Person {username: row.username}) " +
+            "RETURN n1";
+
         let times: number[] = [];
         let db: IDatabase = Database.getDatabase();
         await db.connect();
+
+        await this.purgePerson();
+        await this.purgeProduct();
+        await this.purgePurchase();
+
+        let resultPerson = await db.request(request, persons);
+
+        let followers: { batch: {}[]} = {batch: []};
+
+        // Influenceur
+        followers.batch.push({idFollower: resultPerson[1].get('n1').identity.low, idFollowed: resultPerson[0].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[2].get('n1').identity.low, idFollowed: resultPerson[0].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[3].get('n1').identity.low, idFollowed: resultPerson[0].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[4].get('n1').identity.low, idFollowed: resultPerson[0].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[6].get('n1').identity.low, idFollowed: resultPerson[0].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[7].get('n1').identity.low, idFollowed: resultPerson[0].get('n1').identity.low});
+        // P1
+        followers.batch.push({idFollower: resultPerson[5].get('n1').identity.low, idFollowed: resultPerson[1].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[6].get('n1').identity.low, idFollowed: resultPerson[1].get('n1').identity.low});
+        // P2
+        followers.batch.push({idFollower: resultPerson[7].get('n1').identity.low, idFollowed: resultPerson[2].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[8].get('n1').identity.low, idFollowed: resultPerson[2].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[9].get('n1').identity.low, idFollowed: resultPerson[2].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[10].get('n1').identity.low, idFollowed: resultPerson[2].get('n1').identity.low});
+        // P4
+        followers.batch.push({idFollower: resultPerson[0].get('n1').identity.low, idFollowed: resultPerson[4].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[11].get('n1').identity.low, idFollowed: resultPerson[4].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[12].get('n1').identity.low, idFollowed: resultPerson[4].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[13].get('n1').identity.low, idFollowed: resultPerson[4].get('n1').identity.low});
+        // P01
+        followers.batch.push({idFollower: resultPerson[0].get('n1').identity.low, idFollowed: resultPerson[5].get('n1').identity.low});
+        // P02
+        followers.batch.push({idFollower: resultPerson[7].get('n1').identity.low, idFollowed: resultPerson[6].get('n1').identity.low});
+        // P03
+        followers.batch.push({idFollower: resultPerson[6].get('n1').identity.low, idFollowed: resultPerson[7].get('n1').identity.low});
+        // P04
+        followers.batch.push({idFollower: resultPerson[14].get('n1').identity.low, idFollowed: resultPerson[8].get('n1').identity.low});
+        // P05
+        followers.batch.push({idFollower: resultPerson[2].get('n1').identity.low, idFollowed: resultPerson[9].get('n1').identity.low});
+        followers.batch.push({idFollower: resultPerson[15].get('n1').identity.low, idFollowed: resultPerson[9].get('n1').identity.low});
+        // P06
+        followers.batch.push({idFollower: resultPerson[2].get('n1').identity.low, idFollowed: resultPerson[10].get('n1').identity.low});
+        // P07
+        followers.batch.push({idFollower: resultPerson[13].get('n1').identity.low, idFollowed: resultPerson[11].get('n1').identity.low});
+        // P08
+        followers.batch.push({idFollower: resultPerson[11].get('n1').identity.low, idFollowed: resultPerson[12].get('n1').identity.low});
+        // P09
+        followers.batch.push({idFollower: resultPerson[12].get('n1').identity.low, idFollowed: resultPerson[13].get('n1').identity.low});
+        // P001
+        followers.batch.push({idFollower: resultPerson[17].get('n1').identity.low, idFollowed: resultPerson[16].get('n1').identity.low});
+        // P002
+        followers.batch.push({idFollower: resultPerson[16].get('n1').identity.low, idFollowed: resultPerson[17].get('n1').identity.low});
+
+        request = "UNWIND $batch as row " +
+            "MATCH (n1:Person), (n2:Person) " +
+            "WHERE id(n1) = row.idFollower AND id(n2) = row.idFollowed " +
+            "CREATE (n1)-[:follow]->(n2) ";
+
+        await db.request(request, followers);
+
+        let products: { batch: { productName: string, reference: string }[]} = {batch: []};
+
+        products.batch.push({productName: "Prod1", reference: "Prod1"});
+        products.batch.push({productName: "Prod2", reference: "Prod2"});
+        products.batch.push({productName: "Prod3", reference: "Prod3"});
+        products.batch.push({productName: "Prod4", reference: "Prod4"});
+
+        request = "UNWIND $batch as row " +
+            "CREATE (n1:Product {productName: row.productName, reference: row.reference}) " +
+            "RETURN n1";
+        let resultProduct = await db.request(request, products);
+
+        let purchases: { batch: { date: string }[]} = {batch: []};
+
+        purchases.batch.push({date: "2017-01-01"});
+        purchases.batch.push({date: "2017-01-02"});
+        purchases.batch.push({date: "2017-01-03"});
+        purchases.batch.push({date: "2017-01-04"});
+        purchases.batch.push({date: "2017-01-05"});
+        purchases.batch.push({date: "2017-01-06"});
+        purchases.batch.push({date: "2017-01-07"});
+        purchases.batch.push({date: "2017-01-08"});
+        purchases.batch.push({date: "2017-01-09"});
+        purchases.batch.push({date: "2017-01-10"});
+        purchases.batch.push({date: "2017-01-11"});
+        purchases.batch.push({date: "2017-01-12"});
+        purchases.batch.push({date: "2018-01-01"});
+        purchases.batch.push({date: "2018-01-02"});
+        purchases.batch.push({date: "2018-01-03"});
+
+        request = "UNWIND $batch as row " +
+            "CREATE (n1:Purchase {date: row.date}) " +
+            "RETURN n1";
+        let resultOrder = await db.request(request, purchases);
+
+        let ordereds: { batch: { idPurchase: number, idPerson: number, idProduct: number }[]} = {batch: []};
+
+        // Influenceur
+        ordereds.batch.push({idPurchase: resultOrder[0].get('n1').identity.low, idPerson: resultPerson[0].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[0].get('n1').identity.low, idPerson: resultPerson[0].get('n1').identity.low, idProduct: resultProduct[2].get('n1').identity.low});
+        // P1
+        ordereds.batch.push({idPurchase: resultOrder[1].get('n1').identity.low, idPerson: resultPerson[1].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        // P2
+        ordereds.batch.push({idPurchase: resultOrder[2].get('n1').identity.low, idPerson: resultPerson[2].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[2].get('n1').identity.low, idPerson: resultPerson[2].get('n1').identity.low, idProduct: resultProduct[3].get('n1').identity.low});
+        // P3
+        ordereds.batch.push({idPurchase: resultOrder[3].get('n1').identity.low, idPerson: resultPerson[3].get('n1').identity.low, idProduct: resultProduct[2].get('n1').identity.low});
+        // P01
+        ordereds.batch.push({idPurchase: resultOrder[4].get('n1').identity.low, idPerson: resultPerson[5].get('n1').identity.low, idProduct: resultProduct[2].get('n1').identity.low});
+        // P02
+        ordereds.batch.push({idPurchase: resultOrder[5].get('n1').identity.low, idPerson: resultPerson[6].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        // P03
+        ordereds.batch.push({idPurchase: resultOrder[6].get('n1').identity.low, idPerson: resultPerson[7].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[6].get('n1').identity.low, idPerson: resultPerson[7].get('n1').identity.low, idProduct: resultProduct[3].get('n1').identity.low});
+        // P04
+        ordereds.batch.push({idPurchase: resultOrder[7].get('n1').identity.low, idPerson: resultPerson[8].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        // P05
+        ordereds.batch.push({idPurchase: resultOrder[8].get('n1').identity.low, idPerson: resultPerson[9].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        // P07
+        ordereds.batch.push({idPurchase: resultOrder[9].get('n1').identity.low, idPerson: resultPerson[11].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[9].get('n1').identity.low, idPerson: resultPerson[11].get('n1').identity.low, idProduct: resultProduct[3].get('n1').identity.low});
+        // P08
+        ordereds.batch.push({idPurchase: resultOrder[10].get('n1').identity.low, idPerson: resultPerson[12].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        // P09
+        ordereds.batch.push({idPurchase: resultOrder[11].get('n1').identity.low, idPerson: resultPerson[13].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        // P002
+        ordereds.batch.push({idPurchase: resultOrder[12].get('n1').identity.low, idPerson: resultPerson[15].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        // P0001
+        ordereds.batch.push({idPurchase: resultOrder[13].get('n1').identity.low, idPerson: resultPerson[16].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        // P0002
+        ordereds.batch.push({idPurchase: resultOrder[14].get('n1').identity.low, idPerson: resultPerson[17].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+
+        request = "UNWIND $batch as row " +
+            "MATCH (n1:Purchase) WHERE ID(n1) = row.idPurchase " +
+            "MATCH (n2:Person) WHERE ID(n2) = row.idPerson " +
+            "MATCH (n3:Product) WHERE ID(n3) = row.idProduct " +
+            "CREATE (n2)-[:ordered]->(n1)-[c:contains]->(n3) " +
+            "SET c.quantity = 1 " +
+            "RETURN n1, n2, n3";
+        await db.request(request, ordereds);
 
         return times;
     }
