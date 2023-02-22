@@ -13,6 +13,11 @@ export class GeneratePostgres implements IGenerate {
     }
 
     public async generateTestData(): Promise<number[]> {
+
+        await this.purgePerson();
+        await this.purgePurchase();
+        await this.purgeProduct();
+
         let db: IDatabase = Database.getDatabase();
         let time: number = new Date().getTime();
         await db.connect();
@@ -50,6 +55,7 @@ export class GeneratePostgres implements IGenerate {
             } 
         })
         script += " RETURNING idperson";
+        console.log(script)
         let resultInsertPersons = await db.request(script, []);
 
         console.log(resultInsertPersons);
