@@ -26,7 +26,7 @@ router.get('/database/', (req: any, res: any) => {
 
 router.post('/database/', async (req: any, res: any) => {
     if (checkEnv()) {
-        await Database.getDatabase().disconnect();
+        // await Database.getDatabase().disconnect();
         if (req.body.database === 'neo4j') {
             Database.setGenerateScript(new GenerateNeo4j());
             Database.setDatabase(new Neo4j(`${env.URL_NEO4J!}:${env.PORT_NEO4J!}`, env.USER_NEO4J!, env.PASSWORD_NEO4J!));
@@ -49,8 +49,7 @@ router.get('/count/', async(req: any, res: any) => {
         res.send("La table " + req.query.table + " n'existe pas");
     }
     else {
-        console.log(result);
-        res.send(result);
+        res.send("" + result);
     }
 });
 
