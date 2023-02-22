@@ -5,6 +5,18 @@ import {random, randomDate, randomInt} from "../utils/utils";
 export class GeneratePostgres implements IGenerate {
 
     //============================================================
+    // GENERATE SAMPLES (TP & TESTS)
+    //============================================================
+
+    generateTPData(): Promise<number[]> {
+        throw new Error("Method not implemented.");
+    }
+    
+    generateTestData(): Promise<number[]> {
+        throw new Error("Method not implemented.");
+    }
+
+    //============================================================
     // INSERTS / GENERATE
     //============================================================
 

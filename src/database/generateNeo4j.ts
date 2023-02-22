@@ -3,6 +3,19 @@ import { IGenerate } from './IGenerate';
 import {randomDate, randomInt} from "../utils/utils";
 
 export class GenerateNeo4j implements IGenerate {
+
+    //============================================================
+    // GENERATE SAMPLES (TP & TESTS)
+    //============================================================
+
+    generateTPData(): Promise<number[]> {
+        throw new Error("Method not implemented.");
+    }
+    
+    generateTestData(): Promise<number[]> {
+        throw new Error("Method not implemented.");
+    }
+
     public async generatePerson(insertQuantity: number, batchQuantity: number): Promise<number>{
         let db: IDatabase = Database.getDatabase();
         let time: number = new Date().getTime();
