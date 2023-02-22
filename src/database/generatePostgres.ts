@@ -8,12 +8,55 @@ export class GeneratePostgres implements IGenerate {
     // GENERATE SAMPLES (TP & TESTS)
     //============================================================
 
-    generateTPData(): Promise<number[]> {
+    public async generateTPData(): Promise<number[]> {
         throw new Error("Method not implemented.");
     }
-    
-    generateTestData(): Promise<number[]> {
-        throw new Error("Method not implemented.");
+
+    public async generateTestData(): Promise<number[]> {
+        let db: IDatabase = Database.getDatabase();
+        let time: number = new Date().getTime();
+        await db.connect();
+
+        let persons = [
+             {"username":"Influenceur", "follow":[]},
+
+             {"username":"P1", "follow":[]},
+             {"username":"P2", "follow":[]},
+             {"username":"P3", "follow":[]},
+             {"username":"P4", "follow":[]},
+
+             {"username":"P01", "follow":[]},
+             {"username":"P02", "follow":[]},
+             {"username":"P03", "follow":[]},
+             {"username":"P04", "follow":[]},
+             {"username":"P05", "follow":[]},
+             {"username":"P06", "follow":[]},
+             {"username":"P07", "follow":[]},
+             {"username":"P08", "follow":[]},
+             {"username":"P09", "follow":[]},
+
+             {"username":"P001", "follow":[]},
+             {"username":"P002", "follow":[]},
+
+             {"username":"P0001", "follow":[]},
+             {"username":"P0002", "follow":[]}
+        ]
+
+        let script: string = "INSERT INTO Person (username) VALUES ";
+        persons.forEach((elem, idx, array) => {
+            script += "('"+ elem.username +"')";
+            if (idx < array.length - 1) {
+                script += ",";
+            } 
+        })
+        script += " RETURNING idperson";
+        let resultInsertPersons = await db.request(script, []);
+
+        console.log(resultInsertPersons);
+
+        await db.disconnect();
+        let endTime: number = new Date().getTime();
+        return [endTime - time];
     }
 
     //============================================================
