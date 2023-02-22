@@ -42,6 +42,11 @@ router.get('/listOfAProduct', async(req: any, res: any) => {
     res.json(result);
 });
 
+router.get('/listOfPersons', async(req: any, res: any) => {
+    let result = await Database.getGenerateScript().findNumberOfPersonsThatOrderSpecificProduct(req.query.depth, req.query.username, req.query.reference);
+    res.json(result);
+});
+
 router.delete('/', async(req: any, res: any) => {
     if (req.body.table === 'person') {
         await Database.getGenerateScript().purgePerson();

@@ -1,5 +1,5 @@
 import {Database, IDatabase} from "./IDatabase";
-import { IGenerate } from './IGenerate';
+import {IGenerate} from './IGenerate';
 import {randomDate, randomInt} from "../utils/utils";
 
 export class GenerateNeo4j implements IGenerate {
@@ -150,49 +150,50 @@ export class GenerateNeo4j implements IGenerate {
             "RETURN n1";
         let resultOrder = await db.request(request, purchases);
 
-        let ordereds: { batch: { idPurchase: number, idPerson: number, idProduct: number }[]} = {batch: []};
+        let ordereds: { batch: { idPurchase: number, idPerson: number, idProduct: number, quantity: number }[]} = {batch: []};
 
         // Influenceur
-        ordereds.batch.push({idPurchase: resultOrder[0].get('n1').identity.low, idPerson: resultPerson[0].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
-        ordereds.batch.push({idPurchase: resultOrder[0].get('n1').identity.low, idPerson: resultPerson[0].get('n1').identity.low, idProduct: resultProduct[2].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[0].get('n1').identity.low, idPerson: resultPerson[0].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 2});
+        ordereds.batch.push({idPurchase: resultOrder[0].get('n1').identity.low, idPerson: resultPerson[0].get('n1').identity.low, idProduct: resultProduct[2].get('n1').identity.low, quantity: 5});
         // P1
-        ordereds.batch.push({idPurchase: resultOrder[1].get('n1').identity.low, idPerson: resultPerson[1].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[1].get('n1').identity.low, idPerson: resultPerson[1].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 1});
         // P2
-        ordereds.batch.push({idPurchase: resultOrder[2].get('n1').identity.low, idPerson: resultPerson[2].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
-        ordereds.batch.push({idPurchase: resultOrder[2].get('n1').identity.low, idPerson: resultPerson[2].get('n1').identity.low, idProduct: resultProduct[3].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[2].get('n1').identity.low, idPerson: resultPerson[2].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 3});
+        ordereds.batch.push({idPurchase: resultOrder[2].get('n1').identity.low, idPerson: resultPerson[2].get('n1').identity.low, idProduct: resultProduct[3].get('n1').identity.low, quantity: 2});
         // P3
-        ordereds.batch.push({idPurchase: resultOrder[3].get('n1').identity.low, idPerson: resultPerson[3].get('n1').identity.low, idProduct: resultProduct[2].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[3].get('n1').identity.low, idPerson: resultPerson[3].get('n1').identity.low, idProduct: resultProduct[2].get('n1').identity.low, quantity: 6});
         // P01
-        ordereds.batch.push({idPurchase: resultOrder[4].get('n1').identity.low, idPerson: resultPerson[5].get('n1').identity.low, idProduct: resultProduct[2].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[4].get('n1').identity.low, idPerson: resultPerson[5].get('n1').identity.low, idProduct: resultProduct[2].get('n1').identity.low, quantity: 1});
         // P02
-        ordereds.batch.push({idPurchase: resultOrder[5].get('n1').identity.low, idPerson: resultPerson[6].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[5].get('n1').identity.low, idPerson: resultPerson[6].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 3});
         // P03
-        ordereds.batch.push({idPurchase: resultOrder[6].get('n1').identity.low, idPerson: resultPerson[7].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
-        ordereds.batch.push({idPurchase: resultOrder[6].get('n1').identity.low, idPerson: resultPerson[7].get('n1').identity.low, idProduct: resultProduct[3].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[6].get('n1').identity.low, idPerson: resultPerson[7].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 4});
+        ordereds.batch.push({idPurchase: resultOrder[6].get('n1').identity.low, idPerson: resultPerson[7].get('n1').identity.low, idProduct: resultProduct[3].get('n1').identity.low, quantity: 1});
         // P04
-        ordereds.batch.push({idPurchase: resultOrder[7].get('n1').identity.low, idPerson: resultPerson[8].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[7].get('n1').identity.low, idPerson: resultPerson[8].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 1});
         // P05
-        ordereds.batch.push({idPurchase: resultOrder[8].get('n1').identity.low, idPerson: resultPerson[9].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[8].get('n1').identity.low, idPerson: resultPerson[9].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 2});
         // P07
-        ordereds.batch.push({idPurchase: resultOrder[9].get('n1').identity.low, idPerson: resultPerson[11].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
-        ordereds.batch.push({idPurchase: resultOrder[9].get('n1').identity.low, idPerson: resultPerson[11].get('n1').identity.low, idProduct: resultProduct[3].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[9].get('n1').identity.low, idPerson: resultPerson[11].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 1});
+        ordereds.batch.push({idPurchase: resultOrder[9].get('n1').identity.low, idPerson: resultPerson[11].get('n1').identity.low, idProduct: resultProduct[3].get('n1').identity.low, quantity: 1});
         // P08
-        ordereds.batch.push({idPurchase: resultOrder[10].get('n1').identity.low, idPerson: resultPerson[12].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[10].get('n1').identity.low, idPerson: resultPerson[12].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 2});
         // P09
-        ordereds.batch.push({idPurchase: resultOrder[11].get('n1').identity.low, idPerson: resultPerson[13].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[11].get('n1').identity.low, idPerson: resultPerson[13].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 1});
         // P002
-        ordereds.batch.push({idPurchase: resultOrder[12].get('n1').identity.low, idPerson: resultPerson[15].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[12].get('n1').identity.low, idPerson: resultPerson[15].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 1});
         // P0001
-        ordereds.batch.push({idPurchase: resultOrder[13].get('n1').identity.low, idPerson: resultPerson[16].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[13].get('n1').identity.low, idPerson: resultPerson[16].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 2});
         // P0002
-        ordereds.batch.push({idPurchase: resultOrder[14].get('n1').identity.low, idPerson: resultPerson[17].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low});
+        ordereds.batch.push({idPurchase: resultOrder[14].get('n1').identity.low, idPerson: resultPerson[17].get('n1').identity.low, idProduct: resultProduct[0].get('n1').identity.low, quantity: 1});
 
         request = "UNWIND $batch as row " +
             "MATCH (n1:Purchase) WHERE ID(n1) = row.idPurchase " +
             "MATCH (n2:Person) WHERE ID(n2) = row.idPerson " +
             "MATCH (n3:Product) WHERE ID(n3) = row.idProduct " +
-            "CREATE (n2)-[:ordered]->(n1)-[c:contains]->(n3) " +
-            "SET c.quantity = 1 " +
+            "MERGE (n2)-[:ordered]->(n1) " +
+            "CREATE (n1)-[c:contains]->(n3) " +
+            "SET c.quantity = row.quantity " +
             "RETURN n1, n2, n3";
         await db.request(request, ordereds);
 
@@ -213,10 +214,10 @@ export class GenerateNeo4j implements IGenerate {
 
         let time = new Date().getTime();
         for (let i = 0; i < insertQuantity; i+= batchQuantity) {
-            let data: { batch: { name: string }[]} = {batch: []};
+            let data: { batch: { username: string }[]} = {batch: []};
 
             for (let j = 0; j < batchQuantity && i + j < insertQuantity; j++) {
-                let obj: { name: string } = {name: "Person " + (i + j)};
+                let obj: { username: string } = {username: "Person " + (i + j)};
                 data.batch.push(obj);
             }
 
@@ -301,10 +302,10 @@ export class GenerateNeo4j implements IGenerate {
         await db.connect();
 
         for (let i = 0; i < insertQuantity; i+= batchQuantity) {
-            let data: { batch: { name: string }[]} = {batch: []};
+            let data: { batch: { username: string }[]} = {batch: []};
 
             for (let j = 0; j < batchQuantity && i + j < insertQuantity; j++) {
-                let obj: { name: string } = {name: "Person " + (i + j)};
+                let obj: { username: string } = {username: "Person " + (i + j)};
                 data.batch.push(obj);
             }
 
@@ -449,24 +450,34 @@ export class GenerateNeo4j implements IGenerate {
     // SELECTS / FIND
     //============================================================
 
-    public async findProductsInFollowGroup(depth: number, username: string): Promise<string> {
+    public async findProductsInFollowGroup(depth: number, username: string): Promise<any> {
         let db: IDatabase = Database.getDatabase();
         let time: number = new Date().getTime();
         await db.connect();
 
-        let request = "MATCH (person1:Person { name:\"" + username + "\"})-[:follow *0.." + (depth-1) + "]->(follower:Person) " +
+        let request = "MATCH (follower:Person)-[:follow *0.." + (depth-1) + "]->(person1:Person { username:\"" + username + "\"}) " +
             "WITH DISTINCT follower " +
             "MATCH (follower)-[:ordered]->(order:Purchase) " +
             "MATCH (order)-[c:contains]->(product:Product) " +
-            "RETURN follower.name, product.productName, c.quantity " +
-            "ORDER BY follower.name";
+            "RETURN product.productName, sum(c.quantity) as sum " +
+            "ORDER BY product.productName";
 
         let result = await db.request(request, null);
-
         let endTime: number = new Date().getTime();
+
         console.log(result);
-        console.log(endTime - time);
-        return "";
+
+        let s: { time: number; result: { productName: string, sum: number}[]} = {time: -1, result: []};
+        for (let element of result) {
+            s.result.push(
+                {
+                    productName: element.get('product.productName'),
+                    sum: element.get('sum')
+                }
+            );
+        }
+        s.time = endTime - time;
+        return s;
     }
 
     public async findNumberOfAProductInFollowGroup(depth: number, username: string, reference: string): Promise<any> {
@@ -474,19 +485,43 @@ export class GenerateNeo4j implements IGenerate {
         let time: number = new Date().getTime();
         await db.connect();
 
-        let request = "MATCH (person1:Person { name:\"" + username + "\"})-[:follow *0.." + (depth-1) + "]->(follower:Person) " +
+        let request = "MATCH (follower:Person)-[:follow *0.." + (depth-1) + "]->(person1:Person { username:\"" + username + "\"}) " +
             "WITH DISTINCT follower " +
             "MATCH (follower)-[:ordered]->(order:Purchase) " +
-            "MATCH (order)-[c:contains]->(product:Product {reference: \"" + reference + "\") " +
-            "RETURN follower.name, c.quantity " +
-            "ORDER BY follower.name";
+            "MATCH (order)-[c:contains]->(product:Product {reference: \"" + reference + "\"}) " +
+            "RETURN sum(c.quantity) as sum";
 
         let result = await db.request(request, null);
-
         let endTime: number = new Date().getTime();
-        console.log(result);
-        console.log(endTime - time);
-        return "";
+
+        return {
+            time: endTime - time,
+            result: {
+                sum: result[0].get('sum')
+            }
+        };
+    }
+
+    public async findNumberOfPersonsThatOrderSpecificProduct(depth: number, username: string, reference: string): Promise<any> {
+        let db: IDatabase = Database.getDatabase();
+        let time: number = new Date().getTime();
+        await db.connect();
+
+        let request = "MATCH (follower:Person)-[:follow *0.." + (depth-1) + "]->(person1:Person { username:\"" + username + "\"}) " +
+            "WITH DISTINCT follower " +
+            "MATCH (follower)-[:ordered]->(order:Purchase) " +
+            "MATCH (order)-[c:contains]->(product:Product {reference: \"" + reference + "\"}) " +
+            "RETURN count(follower) as count "
+
+        let result = await db.request(request, null);
+        let endTime: number = new Date().getTime();
+
+        return {
+            time: endTime - time,
+            result: {
+                count: result[0].get('count').low
+            }
+        };
     }
 
     //============================================================

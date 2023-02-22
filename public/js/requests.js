@@ -13,6 +13,11 @@ let usernameRequest2 = document.getElementById("input-username-request-2");
 let productRequest2 = document.getElementById("input-product-request-2");
 let buttonRequest2 = document.getElementById("button-request-2");
 
+let depthRequest3 = document.getElementById("input-depht-request-3");
+let usernameRequest3 = document.getElementById("input-username-request-3");
+let productRequest3 = document.getElementById("input-product-request-3");
+let buttonRequest3 = document.getElementById("button-request-3");
+
 // init switch database
 fetch('http://localhost:3000/api/database', {
     method: 'GET',
@@ -60,8 +65,7 @@ switchDatabse.addEventListener("change", function(event) {
         });
 });
 
-buttonRequest1.addEventListener("click", function(event) {
-    console.log("button-request-1 clicked");
+buttonRequest1.addEventListener("click", function() {
  
     if (depthRequest1.value === "" || depthRequest1.value === null || depthRequest1.value === undefined) {
         alert("Please enter a depth");
@@ -91,8 +95,7 @@ buttonRequest1.addEventListener("click", function(event) {
     }));
  });
 
- buttonRequest2.addEventListener("click", function(event) {
-    console.log("button-request-2 clicked");
+buttonRequest2.addEventListener("click", function() {
  
     if (depthRequest2.value === "" || depthRequest2.value === null || depthRequest2.value === undefined) {
         alert("Please enter a depth");
@@ -125,4 +128,39 @@ buttonRequest1.addEventListener("click", function(event) {
             textareaJson.textContent = JSON.stringify(data.result, null, "\t");
             responseInput.textContent = data.time;
     }));
- });
+});
+
+buttonRequest3.addEventListener("click", function() {
+
+    if (depthRequest3.value === "" || depthRequest3.value === null || depthRequest3.value === undefined) {
+        alert("Please enter a depth");
+        return;
+    }
+    let depth = parseInt(depthRequest3.value);
+    if (depth <= 0) {
+        alert("Please enter a depth (>=1)");
+        return;
+    }
+
+    if (usernameRequest3.value === "" || usernameRequest3.value === null || usernameRequest3.value === undefined) {
+        alert("Please enter a username");
+        return;
+    }
+
+    if (productRequest3.value === "" || productRequest3.value === null || productRequest3.value === undefined) {
+        alert("Please enter a reference");
+        return;
+    }
+
+    fetch(`http://localhost:3000/api/generate/listOfPersons?depth=${depth}&username=${usernameRequest3.value}&reference=${productRequest3.value}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then((response) => response.json()
+            .then((data) => {
+                textareaJson.textContent = JSON.stringify(data.result, null, "\t");
+                responseInput.textContent = data.time;
+            }));
+});

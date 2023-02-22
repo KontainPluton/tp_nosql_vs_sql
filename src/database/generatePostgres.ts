@@ -265,6 +265,10 @@ export class GeneratePostgres implements IGenerate {
         return {result: result, time: resultTime};
     }
 
+    public async findNumberOfPersonsThatOrderSpecificProduct(depth: number, username: string, reference: string): Promise<any> {
+        return Promise.resolve(undefined);
+    }
+
     //============================================================
     // DELETES / PURGE
     //============================================================
