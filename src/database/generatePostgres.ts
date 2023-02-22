@@ -13,38 +13,38 @@ export class GeneratePostgres implements IGenerate {
     }
 
     public async generateTestData(): Promise<number[]> {
-
-        await this.purgePerson();
+        
         await this.purgePurchase();
+        await this.purgePerson();
         await this.purgeProduct();
 
         let db: IDatabase = Database.getDatabase();
         let time: number = new Date().getTime();
         await db.connect();
 
-        let persons = [
-             {"username":"Influenceur", "follow":[]},
+        let persons: { username: string, id: number|null, follow: (number|null)[], idOrder: number|null, ordered: (number|null)[]}[] = [
+             {"username":"Influenceur", "id":null, "follow":[], "ordered":[], "idOrder": null},
 
-             {"username":"P1", "follow":[]},
-             {"username":"P2", "follow":[]},
-             {"username":"P3", "follow":[]},
-             {"username":"P4", "follow":[]},
+             {"username":"P1", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P2", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P3", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P4", "id":null, "follow":[], "ordered":[], "idOrder": null}, 
 
-             {"username":"P01", "follow":[]},
-             {"username":"P02", "follow":[]},
-             {"username":"P03", "follow":[]},
-             {"username":"P04", "follow":[]},
-             {"username":"P05", "follow":[]},
-             {"username":"P06", "follow":[]},
-             {"username":"P07", "follow":[]},
-             {"username":"P08", "follow":[]},
-             {"username":"P09", "follow":[]},
+             {"username":"P01", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P02", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P03", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P04", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P05", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P06", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P07", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P08", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P09", "id":null, "follow":[], "ordered":[], "idOrder": null},
 
-             {"username":"P001", "follow":[]},
-             {"username":"P002", "follow":[]},
+             {"username":"P001", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P002", "id":null, "follow":[], "ordered":[], "idOrder": null},
 
-             {"username":"P0001", "follow":[]},
-             {"username":"P0002", "follow":[]}
+             {"username":"P0001", "id":null, "follow":[], "ordered":[], "idOrder": null},
+             {"username":"P0002", "id":null, "follow":[], "ordered":[], "idOrder": null}
         ]
 
         let script: string = "INSERT INTO Person (username) VALUES ";
@@ -55,10 +55,116 @@ export class GeneratePostgres implements IGenerate {
             } 
         })
         script += " RETURNING idperson";
-        console.log(script)
         let resultInsertPersons = await db.request(script, []);
 
-        console.log(resultInsertPersons);
+        for(let i =0; i< resultInsertPersons.length; i++) {
+            persons[i].id = resultInsertPersons[i].idperson; 
+        }
+
+        //Links - Follows
+        persons[0].follow.push(persons[4].id,persons[5].id); //Influenceur
+        persons[1].follow.push(persons[0].id); //P1
+        persons[2].follow.push(persons[0].id, persons[9].id, persons[10].id); //P2
+        persons[3].follow.push(persons[0].id); //P3
+        persons[4].follow.push(persons[0].id); //P4
+        persons[5].follow.push(persons[1].id); //P01
+        persons[6].follow.push(persons[0].id, persons[1].id, persons[7].id); //P02
+        persons[7].follow.push(persons[0].id, persons[2].id, persons[6].id); //P03
+        persons[8].follow.push(persons[2].id); //P04
+        persons[9].follow.push(persons[2].id); //P05
+        persons[10].follow.push(persons[2].id); //P06
+        persons[11].follow.push(persons[4].id, persons[12].id); //P07
+        persons[12].follow.push(persons[4].id, persons[13].id); //P08
+        persons[13].follow.push(persons[4].id, persons[11].id); //P09
+        persons[14].follow.push(persons[8].id); //P001
+        persons[15].follow.push(persons[9].id); //P002
+        persons[16].follow.push(persons[17].id); //P0001
+        persons[17].follow.push(persons[16].id); //P0002
+
+        script = "INSERT INTO Follow (idFollower, idFollowed) VALUES ";
+        persons.forEach((elem, idx, array) => {
+            elem.follow.forEach((elem2, idx2, array2) => {
+                script += "(" + elem2 + " , " + elem.id + ")";
+                if (idx2 < array2.length - 1) {
+                    script += ",";
+                } 
+            })
+            if (idx < array.length - 1) {
+                script += ",";
+            } 
+        })
+        await db.request(script, []);
+
+        script = "INSERT INTO Purchase (datePurchase, idPerson) VALUES ";
+        persons.forEach((elem, idx, array) => {
+            let date: Date = randomDate(new Date(2023, 0, 1), new Date());
+            script += "('" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+            script += "'," + elem.id + ")";
+            if (idx < array.length - 1) {
+                script += ",";
+            } 
+        })
+        script += " RETURNING idpurchase";
+        let resultInsertPurchase = await db.request(script, []);
+
+        for(let i =0; i< resultInsertPurchase.length; i++) {
+            persons[i].idOrder = resultInsertPurchase[i].idpurchase; 
+        }
+
+        let products: {productName: string, reference: string, id: number|null}[] = [
+            {"productName":"Prod1", "id":null, "reference":"Prod1"},
+            {"productName":"Prod2", "id":null, "reference":"Prod2"},
+            {"productName":"Prod3", "id":null, "reference":"Prod3"},
+            {"productName":"Prod4", "id":null, "reference":"Prod4"},
+       ]
+
+       script = "INSERT INTO Product (productName, reference) VALUES ";
+       products.forEach((elem, idx, array) => {
+            script += "('" + elem.productName + "','" + elem.reference + "')";
+            if (idx < array.length - 1) {
+               script += ",";
+            } 
+       })
+       script += " RETURNING idproduct";
+       let resultInsertProducts = await db.request(script, []);
+
+        for(let i =0; i< resultInsertProducts.length; i++) {
+           products[i].id = resultInsertProducts[i].idproduct; 
+        }
+
+        //Links - Purchase
+        persons[0].ordered.push(products[0].id, products[2].id); //Influenceur
+        persons[1].ordered.push(products[0].id); //P1
+        persons[2].ordered.push(products[0].id, products[3].id); //P2
+        persons[3].ordered.push(products[2].id); //P3
+        persons[4].ordered.push(); //P4
+        persons[5].ordered.push(products[2].id); //P01
+        persons[6].ordered.push(products[0].id); //P02
+        persons[7].ordered.push(products[0].id, products[3].id); //P03
+        persons[8].ordered.push(products[0].id); //P04
+        persons[9].ordered.push(products[0].id); //P05
+        persons[10].ordered.push(); //P06
+        persons[11].ordered.push(products[0].id, products[3].id); //P07
+        persons[12].ordered.push(products[0].id); //P08
+        persons[13].ordered.push(products[0].id); //P09
+        persons[14].ordered.push(); //P001
+        persons[15].ordered.push(products[0].id); //P002
+        persons[16].ordered.push(products[0].id); //P0001
+        persons[17].ordered.push(products[0].id); //P0002
+
+        script = "INSERT INTO Purchase_content (idProduct, idPurchase, quantity) VALUES ";
+        persons.forEach((elem, idx, array) => {
+            elem.ordered.forEach((elem2, idx2, array2) => {
+                script += "(" + elem2 + "," + elem.idOrder + ", " + 1 + ")";
+                if (idx2 < array2.length - 1) {
+                    script += ",";
+                } 
+            })
+            if (idx < array.length - 1 && elem.ordered.length > 0) {
+                script += ",";
+            } 
+        })
+        await db.request(script, []);
 
         await db.disconnect();
         let endTime: number = new Date().getTime();
@@ -219,12 +325,15 @@ export class GeneratePostgres implements IGenerate {
                                         "UNION ALL " +
                                         "SELECT p2.idPerson, p2.username, depth+1, p2.idPerson = ANY(path), path || p2.idPerson " + 
                                         "FROM PERSON p2 " +
-                                        "INNER JOIN FOLLOW f ON f.idFollower = p2.idPerson " +
-                                        "INNER JOIN followers ON followers.idPerson = f.idFollowed " +
-                                        "WHERE depth < $2 AND NOT is_cycle ) " +
+                                        "INNER JOIN FOLLOW f ON f.idFollowed = p2.idPerson " +
+                                        "INNER JOIN followers ON followers.idPerson = f.idFollower " +
+                                        "WHERE depth < $2 AND NOT p2.idPerson = ANY(path) ), " +
+                                    "distinctFollowers AS ( " + 
+                                        "SELECT DISTINCT f.idPerson, f.username " +
+                                        "FROM followers f) " +
                                     "SELECT reference, COUNT(1) " +
-                                    "FROM followers f " + 
-                                    "INNER JOIN PURCHASE pur ON pur.idPerson = f.idPerson " + 
+                                    "FROM distinctFollowers df " + 
+                                    "INNER JOIN PURCHASE pur ON pur.idPerson = df.idPerson " + 
                                     "INNER JOIN PURCHASE_CONTENT purCt ON purCt.idPurchase = pur.idPurchase " + 
                                     "INNER JOIN PRODUCT pro ON pro.idProduct = purCt.idProduct " +
                                     "GROUP BY reference "
@@ -248,12 +357,15 @@ export class GeneratePostgres implements IGenerate {
                                         "UNION ALL " +
                                         "SELECT p2.idPerson, p2.username, depth+1, p2.idPerson = ANY(path), path || p2.idPerson " + 
                                         "FROM PERSON p2 " +
-                                        "INNER JOIN FOLLOW f ON f.idFollower = p2.idPerson " +
-                                        "INNER JOIN followers ON followers.idPerson = f.idFollowed " +
-                                        "WHERE depth < $2 AND NOT is_cycle ) " +
+                                        "INNER JOIN FOLLOW f ON f.idFollowed = p2.idPerson " +
+                                        "INNER JOIN followers ON followers.idPerson = f.idFollower " +
+                                        "WHERE depth < $2 AND NOT p2.idPerson = ANY(path) ), " +
+                                    "distinctFollowers AS ( " + 
+                                        "SELECT DISTINCT f.idPerson, f.username " +
+                                        "FROM followers f) " +
                                     "SELECT COUNT(1) " +
-                                    "FROM followers f " + 
-                                    "INNER JOIN PURCHASE pur ON pur.idPerson = f.idPerson " + 
+                                    "FROM distinctFollowers df " + 
+                                    "INNER JOIN PURCHASE pur ON pur.idPerson = df.idPerson " + 
                                     "INNER JOIN PURCHASE_CONTENT purCt ON purCt.idPurchase = pur.idPurchase " + 
                                     "INNER JOIN PRODUCT pro ON pro.idProduct = purCt.idProduct " +
                                     "WHERE reference = $3"
@@ -291,7 +403,7 @@ export class GeneratePostgres implements IGenerate {
         let db: IDatabase = Database.getDatabase();
         await db.connect();
         await db.request("DELETE FROM Purchase_content", []);
-        await db.request("DELETE FROM Product", []);
+        await db.request("DELETE FROM Purchase", []);
         await db.request("ALTER SEQUENCE Purchase_idpurchase_seq RESTART WITH 1", []);
         await db.disconnect();
     }

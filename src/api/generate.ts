@@ -48,7 +48,12 @@ router.delete('/', async(req: any, res: any) => {
         res.json({response: "OK"});
     }
     else if (req.body.table === 'product') {
-        //TODO
+        await Database.getGenerateScript().purgeProduct();
+        res.json({response: "OK"});
+    }
+    else if (req.body.table === 'purchase') {
+        await Database.getGenerateScript().purgePurchase();
+        res.json({response: "OK"});
     }
     else {
         console.log("Erreur");
