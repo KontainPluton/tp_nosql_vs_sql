@@ -251,6 +251,6 @@ export class GeneratePostgres implements IGenerate {
         let db: IDatabase = Database.getDatabase();
         await db.connect();
         let result = await db.request("SELECT COUNT(*) from " + table, []);
-        return result;
+        return result[0].count;
     }
 }

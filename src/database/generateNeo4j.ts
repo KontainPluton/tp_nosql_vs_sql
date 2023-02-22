@@ -351,8 +351,8 @@ export class GenerateNeo4j implements IGenerate {
     public async count(table: string): Promise<number> {
         let db: IDatabase = Database.getDatabase();
         await db.connect();
-        let res = await db.request("MATCH (n:" + table + ") RETURN count(n)", null);
-        console.log(res);
-        return res;
+        table = table.charAt(0).toUpperCase() + table.slice(1);
+        let res = await db.request("MATCH (n:" + table + ") RETURN count(*) as count", null);
+        return res[0].get('count').low;
     }
 }

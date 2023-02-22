@@ -116,7 +116,8 @@ buttonCount.addEventListener("click", function(event) {
         }
     })
         .then(async (response) => {
-            console.log(await response.text());
+            let data = await response.text();
+            responseInput.textContent = "Count : " + data;
         });
 });
 
