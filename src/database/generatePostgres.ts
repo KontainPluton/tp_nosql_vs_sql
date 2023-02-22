@@ -289,4 +289,11 @@ export class GeneratePostgres implements IGenerate {
         await db.request("ALTER SEQUENCE Purchase_idpurchase_seq RESTART WITH 1", []);
         await db.disconnect();
     }
+
+    public async count(table: string): Promise<number> {
+        let db: IDatabase = Database.getDatabase();
+        await db.connect();
+        let result = await db.request("SELECT COUNT(*) from " + table, []);
+        return result;
+    }
 }

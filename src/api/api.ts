@@ -24,8 +24,9 @@ router.get('/database/', (req: any, res: any) => {
     }
 });
 
-router.post('/database/', (req: any, res: any) => {
+router.post('/database/', async (req: any, res: any) => {
     if (checkEnv()) {
+        await Database.getDatabase().disconnect();
         if (req.body.database === 'neo4j') {
             Database.setGenerateScript(new GenerateNeo4j());
             Database.setDatabase(new Neo4j(`${env.URL_NEO4J!}:${env.PORT_NEO4J!}`, env.USER_NEO4J!, env.PASSWORD_NEO4J!));
@@ -43,16 +44,14 @@ router.post('/database/', (req: any, res: any) => {
 });
 
 router.get('/count/', async(req: any, res: any) => {
-    let db: IDatabase = Database.getDatabase();
-    await db.connect();
-    let result = await db.request("SELECT COUNT(*) from " + req.query.table, []);
+    let result = await Database.getGenerateScript().count(req.query.table);
     if (result === null) {
         res.send("La table " + req.query.table + " n'existe pas");
     }
     else {
+        console.log(result);
         res.send(result);
     }
-    await db.disconnect();
 });
 
 module.exports = router;

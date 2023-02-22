@@ -8,7 +8,7 @@ export interface IGenerate {
 
     findProductsInFollowGroup(depth: number, username: string): Promise<any>;
     findNumberOfAProductInFollowGroup(depth: number, username: string, reference: string): Promise<any>;
-
+    count(table: string): Promise<number>;
     purgePerson(): Promise<void>;
     purgeProduct(): Promise<void>;
     purgePurchase(): Promise<void>;

@@ -7,7 +7,10 @@ let dropdownBatchTitle = document.getElementById("dropdown-batch-title");
 let inputNumberInsert = document.getElementById("input-number-insert");
 let responseInput = document.getElementById("response-time");
 let buttonSend = document.getElementById("button-send");
+let buttonCount = document.getElementById("button-count");
 let buttonPurge = document.getElementById("button-purge");
+let buttonGenerateTpData = document.getElementById("button-generate-tp-data");
+let buttonGenerateTestData = document.getElementById("button-generate-test-data");
 
 let table = "";
 let insertQuantity = 0;
@@ -100,6 +103,23 @@ buttonSend.addEventListener("click", function(event) {
            }));
 });
 
+buttonCount.addEventListener("click", function(event) {
+    if (table === "") {
+        alert("Please select a table");
+        return;
+    }
+
+    fetch('http://localhost:3000/api/count?table=' + table, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(async (response) => {
+            console.log(await response.text());
+        });
+});
+
 buttonPurge.addEventListener("click", function(event) {
     if (table === "") {
         alert("Please select a table");
@@ -118,5 +138,31 @@ buttonPurge.addEventListener("click", function(event) {
         .then((response) => response.json()
             .then((data) => {
                 responseInput.textContent = "Purge : " + data.response;
+            }));
+});
+
+buttonGenerateTpData.addEventListener("click", function(event) {
+    fetch('http://localhost:3000/api/generate/tpData', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then((response) => response.json()
+            .then((data) => {
+                responseInput.textContent = data.response;
+            }));
+});
+
+buttonGenerateTestData.addEventListener("click", function(event) {
+    fetch('http://localhost:3000/api/generate/testData', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then((response) => response.json()
+            .then((data) => {
+                responseInput.textContent = data.response;
             }));
 });
