@@ -221,19 +221,16 @@ export class GeneratePostgres implements IGenerate {
             if (batchQuantity > 1) {
                 script = "INSERT INTO Follow (idFollower, idFollowed) VALUES ";
                 for (const element of persons) {
-                    let rand: number = random();
-                    if (rand > 0.6) {
-                        let maxFollow: number = randomInt(0, 20);
-                        let alreadyFollowed: number[] = [];
-                        alreadyFollowed.push(element.idperson);
-                        for (let k = 0; k < maxFollow; k++) {
+                    let maxFollow: number = randomInt(0, 20);
+                    let alreadyFollowed: number[] = [];
+                    alreadyFollowed.push(element.idperson);
+                    for (let k = 0; k < maxFollow; k++) {
+                        let rand = randomInt(0, persons.length);
+                        while (alreadyFollowed.includes(persons[rand].idperson)) {
                             rand = randomInt(0, persons.length);
-                            while (alreadyFollowed.includes(persons[rand].idperson)) {
-                                rand = randomInt(0, persons.length);
-                            }
-                            alreadyFollowed.push(persons[rand].idperson);
-                            script += "(" + element.idperson + "," + persons[rand].idperson + "),";
                         }
+                        alreadyFollowed.push(persons[rand].idperson);
+                        script += "(" + element.idperson + "," + persons[rand].idperson + "),";
                     }
                 }
 
@@ -478,7 +475,35 @@ export class GeneratePostgres implements IGenerate {
     }
 
     public async findNumberOfPersonsThatOrderSpecificProduct(depth: number, username: string, reference: string): Promise<any> {
-        return Promise.resolve(undefined);
+        let db: IDatabase = Database.getDatabase();
+        let time: number = new Date().getTime();
+        await db.connect();
+
+        let result = await db.request("WITH RECURSIVE followers (idPerson, username, depth, is_cycle, path) AS ( " +
+            "SELECT p1.idPerson, p1.username, 1, false, ARRAY[p1.idPerson] " +
+            "FROM PERSON p1 " +
+            "WHERE p1.username = $1::text " +
+            "UNION ALL " +
+            "SELECT p2.idPerson, p2.username, depth+1, p2.idPerson = ANY(path), path || p2.idPerson " +
+            "FROM PERSON p2 " +
+            "INNER JOIN FOLLOW f ON f.idFollowed = p2.idPerson " +
+            "INNER JOIN followers ON followers.idPerson = f.idFollower " +
+            "WHERE depth < $2 AND NOT p2.idPerson = ANY(path) ), " +
+            "distinctFollowers AS ( " +
+            "SELECT DISTINCT f.idPerson, f.username " +
+            "FROM followers f) " +
+            "SELECT COUNT(1) " +
+            "FROM distinctFollowers df " +
+            "INNER JOIN PURCHASE pur ON pur.idPerson = df.idPerson " +
+            "INNER JOIN PURCHASE_CONTENT purCt ON purCt.idPurchase = pur.idPurchase " +
+            "INNER JOIN PRODUCT pro ON pro.idProduct = purCt.idProduct " +
+            "WHERE reference = $3"
+            , [username,depth,reference]);
+
+        await db.disconnect();
+        let endTime: number = new Date().getTime();
+        let resultTime = endTime - time;
+        return {result: result, time: resultTime};
     }
 
     //============================================================

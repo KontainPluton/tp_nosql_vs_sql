@@ -281,7 +281,8 @@ export class GenerateNeo4j implements IGenerate {
             let data5 : { batch: { idPurchase: number, idProduct: number }[]} = {batch: []};
             for (const purchase of purchases) {
                 let rand = randomInt(0, products.length);
-                let obj: { idPurchase: number, idProduct: number } = {idPurchase: purchase.get('n1').identity.low, idProduct: products[rand].get('n1').identity.low};
+                let randQuantity = randomInt(1, 5);
+                let obj: { idPurchase: number, idProduct: number, quantity: number } = {idPurchase: purchase.get('n1').identity.low, idProduct: products[rand].get('n1').identity.low, quantity: randQuantity};
                 data5.batch.push(obj);
             }
 
@@ -289,7 +290,7 @@ export class GenerateNeo4j implements IGenerate {
                 "MATCH (purchase:Purchase), (product:Product) " +
                 "WHERE id(purchase) = row.idPurchase AND id(product) = row.idProduct " +
                 "CREATE (purchase)-[c:contains]->(product) " +
-                "SET c.quantity = 1";
+                "SET c.quantity = row.quantity"
 
             await db.request(request, data5);
         }
@@ -463,6 +464,8 @@ export class GenerateNeo4j implements IGenerate {
             "ORDER BY product.productName";
 
         let result = await db.request(request, null);
+
+        console.log(result);
         let endTime: number = new Date().getTime();
 
         console.log(result);
@@ -472,7 +475,7 @@ export class GenerateNeo4j implements IGenerate {
             s.result.push(
                 {
                     productName: element.get('product.productName'),
-                    sum: element.get('sum')
+                    sum: element.get('sum').low
                 }
             );
         }
@@ -497,7 +500,7 @@ export class GenerateNeo4j implements IGenerate {
         return {
             time: endTime - time,
             result: {
-                sum: result[0].get('sum')
+                sum: result[0].get('sum').low
             }
         };
     }
