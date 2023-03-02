@@ -5,11 +5,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Tp_NoSQL_vs_SQL</title>
+    <link rel="stylesheet" href="css/loader.css">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Acme&amp;display=swap">
 </head>
 
 <body style="background: rgb(252,251,231);">
+    <div id="loader-box">
+        <img id="loader-img" src="assets/loading.gif"/>
+    </div>
     <nav class="navbar navbar-light navbar-expand-md" style="background: linear-gradient(101deg, #ffb3ea, #e159bb), #ffb3ea;border-bottom-style: solid;border-bottom-color: var(--bs-pink);">
         <div class="container-fluid"><a class="navbar-brand" href="#">TP &gt; NoSQL vs SQL</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-1">
@@ -24,7 +28,7 @@
         <input class="form-check-input" type="checkbox" role="switch" id="switch-database">
         <label class="form-check-label" for="switch-database" id="database-label">postgres</label>
     </div>
-    <div class="row" style="margin-top: 10px;">
+    <div style="margin-top: 10px;">
         <div class="col-md-8 offset-md-2">
             <form>
                 <div class="d-flex justify-content-md-center align-items-md-center">
@@ -51,12 +55,12 @@
             </form>
         </div>
     </div>
-    <div class="row" style="margin-top: 5px;margin-bottom: 5px;">
+    <div style="margin-top: 5px;margin-bottom: 5px;">
         <div class="col d-md-flex justify-content-md-center">
             <h3 style="font-size: 19.52px;"><span style="text-decoration: underline; color: rgb(251, 168, 228);">---Résultats---</span></h3>
         </div>
     </div>
-    <div class="row" style="margin-top: 5px;margin-bottom: 5px;">
+    <div style="margin-top: 5px;margin-bottom: 5px;">
         <div class="col-md-10 offset-md-1">
             <p class="text-center">Temps de la requête (en ms) :&nbsp;</p>
             <p class="text-center" id="response-time"></p>

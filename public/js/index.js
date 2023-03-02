@@ -1,3 +1,5 @@
+let loaderBox = document.getElementById("loader-box");
+
 let switchDatabse = document.getElementById("switch-database");
 let databaseLabel = document.getElementById("database-label");
 let dropdownTable = document.getElementById("dropdown-table");
@@ -15,6 +17,18 @@ let buttonGenerateTestData = document.getElementById("button-generate-test-data"
 let table = "";
 let insertQuantity = 0;
 let batchQuantity = 1;
+
+function toggleLoader() {
+
+    if (loaderBox.style.display === "none") {
+        loaderBox.style.display = "block";
+    }
+    else {
+        loaderBox.style.display = "none";
+    }
+}
+
+toggleLoader();
 
 // init switch database
 fetch('http://localhost:3000/api/database', {
@@ -44,6 +58,7 @@ switchDatabse.addEventListener("change", function(event) {
         database = "postgres";
     }
 
+    toggleLoader();
     fetch('http://localhost:3000/api/database', {
         method: 'POST',
         headers: {
@@ -54,10 +69,12 @@ switchDatabse.addEventListener("change", function(event) {
         })
     })
         .then(async (response) => {
+            toggleLoader();
             console.log(await response.text());
             databaseLabel.textContent = database;
         })
         .catch((error) => {
+            toggleLoader();
             console.error(error);
             databaseLabel.textContent = "Erreur";
         });
@@ -86,6 +103,7 @@ buttonSend.addEventListener("click", function(event) {
        return;
    }
 
+    toggleLoader();
    fetch('http://localhost:3000/api/generate', {
        method: 'POST',
        headers: {
@@ -99,6 +117,7 @@ buttonSend.addEventListener("click", function(event) {
    })
        .then((response) => response.json()
            .then((data) => {
+               toggleLoader();
                responseInput.textContent = data.time;
            }));
 });
@@ -109,6 +128,7 @@ buttonCount.addEventListener("click", function(event) {
         return;
     }
 
+    toggleLoader();
     fetch('http://localhost:3000/api/count?table=' + table, {
         method: 'GET',
         headers: {
@@ -116,6 +136,7 @@ buttonCount.addEventListener("click", function(event) {
         }
     })
         .then(async (response) => {
+            toggleLoader();
             let data = await response.text();
             responseInput.textContent = "Count : " + data;
         });
@@ -127,6 +148,7 @@ buttonPurge.addEventListener("click", function(event) {
         return;
     }
 
+    toggleLoader();
     fetch('http://localhost:3000/api/generate', {
         method: 'DELETE',
         headers: {
@@ -138,11 +160,14 @@ buttonPurge.addEventListener("click", function(event) {
     })
         .then((response) => response.json()
             .then((data) => {
+                toggleLoader();
                 responseInput.textContent = "Purge : " + data.response;
             }));
 });
 
 buttonGenerateTpData.addEventListener("click", function(event) {
+
+    toggleLoader();
     fetch('http://localhost:3000/api/generate/tpData', {
         method: 'POST',
         headers: {
@@ -151,11 +176,17 @@ buttonGenerateTpData.addEventListener("click", function(event) {
     })
         .then((response) => response.json()
             .then((data) => {
-                responseInput.textContent = data.response;
+                toggleLoader();
+                let total = 0;
+                data.times.forEach((time) => {
+                    total += time;
+                });
+                responseInput.textContent = total + " ms";
             }));
 });
 
 buttonGenerateTestData.addEventListener("click", function(event) {
+    toggleLoader();
     fetch('http://localhost:3000/api/generate/testData', {
         method: 'POST',
         headers: {
@@ -164,6 +195,7 @@ buttonGenerateTestData.addEventListener("click", function(event) {
     })
         .then((response) => response.json()
             .then((data) => {
+                toggleLoader();
                 responseInput.textContent = data.response;
             }));
 });

@@ -1,3 +1,5 @@
+let loaderBox = document.getElementById("loader-box");
+
 let switchDatabse = document.getElementById("switch-database");
 let databaseLabel = document.getElementById("database-label");
 
@@ -17,6 +19,18 @@ let depthRequest3 = document.getElementById("input-depht-request-3");
 let usernameRequest3 = document.getElementById("input-username-request-3");
 let productRequest3 = document.getElementById("input-product-request-3");
 let buttonRequest3 = document.getElementById("button-request-3");
+
+function toggleLoader() {
+
+    if (loaderBox.style.display === "none") {
+        loaderBox.style.display = "block";
+    }
+    else {
+        loaderBox.style.display = "none";
+    }
+}
+
+toggleLoader();
 
 // init switch database
 fetch('http://localhost:3000/api/database', {
@@ -46,6 +60,7 @@ switchDatabse.addEventListener("change", function(event) {
         database = "postgres";
     }
 
+    toggleLoader();
     fetch('http://localhost:3000/api/database', {
         method: 'POST',
         headers: {
@@ -56,10 +71,12 @@ switchDatabse.addEventListener("change", function(event) {
         })
     })
         .then(async (response) => {
+            toggleLoader();
             console.log(await response.text());
             databaseLabel.textContent = database;
         })
         .catch((error) => {
+            toggleLoader();
             console.error(error);
             databaseLabel.textContent = "Erreur";
         });
@@ -81,7 +98,8 @@ buttonRequest1.addEventListener("click", function() {
         alert("Please enter a username");
         return;
     }
- 
+
+    toggleLoader();
     fetch(`http://localhost:3000/api/generate/listProduct?depth=${depth}&username=${usernameRequest1.value}`, {
         method: 'GET',
         headers: {
@@ -90,6 +108,7 @@ buttonRequest1.addEventListener("click", function() {
     })
     .then((response) => response.json()
         .then((data) => {
+            toggleLoader();
             textareaJson.textContent = JSON.stringify(data.result, null, "\t");
             responseInput.textContent = data.time;
     }));
@@ -117,6 +136,7 @@ buttonRequest2.addEventListener("click", function() {
         return;
     }
 
+    toggleLoader();
     fetch(`http://localhost:3000/api/generate/listOfAProduct?depth=${depth}&username=${usernameRequest2.value}&reference=${productRequest2.value}`, {
         method: 'GET',
         headers: {
@@ -125,6 +145,7 @@ buttonRequest2.addEventListener("click", function() {
     })
     .then((response) => response.json()
         .then((data) => {
+            toggleLoader();
             textareaJson.textContent = JSON.stringify(data.result, null, "\t");
             responseInput.textContent = data.time;
     }));
@@ -152,6 +173,7 @@ buttonRequest3.addEventListener("click", function() {
         return;
     }
 
+    toggleLoader();
     fetch(`http://localhost:3000/api/generate/listOfPersons?depth=${depth}&username=${usernameRequest3.value}&reference=${productRequest3.value}`, {
         method: 'GET',
         headers: {
@@ -160,6 +182,7 @@ buttonRequest3.addEventListener("click", function() {
     })
         .then((response) => response.json()
             .then((data) => {
+                toggleLoader();
                 textareaJson.textContent = JSON.stringify(data.result, null, "\t");
                 responseInput.textContent = data.time;
             }));

@@ -9,7 +9,25 @@ export class GeneratePostgres implements IGenerate {
     //============================================================
 
     public async generateTPData(): Promise<number[]> {
-        throw new Error("Method not implemented.");
+        let times: number[] = [];
+        let db: IDatabase = Database.getDatabase();
+        await db.connect();
+
+        await this.purgePerson();
+        await this.purgeProduct();
+        await this.purgePurchase();
+
+        let time = await this.generateProduct(10000, 1000);
+        times.push(time);
+
+        await db.connect();
+
+        time = await this.generateTPPersonAndOrder(1000000, 100000);
+        times.push(time);
+
+        await db.disconnect();
+
+        return times;
     }
 
     public async generateTestData(): Promise<number[]> {
@@ -175,6 +193,87 @@ export class GeneratePostgres implements IGenerate {
     //============================================================
     // INSERTS / GENERATE
     //============================================================
+
+    private async generateTPPersonAndOrder(insertQuantity: number, batchQuantity: number): Promise<number> {
+        let db: IDatabase = Database.getDatabase();
+
+        let products = await db.request("SELECT idProduct FROM Product LIMIT 10000", []);
+
+        let time = new Date().getTime();
+
+        let result = await db.request("SELECT MAX(idperson) FROM Person", []);
+        if (result.max == null) {
+            result.max = 0;
+        }
+        insertQuantity += result.max;
+
+        for (let i = result.max; i < insertQuantity; i+= batchQuantity) {
+            let script: string = "INSERT INTO Person (username) VALUES ";
+            for (let j = 0; j < batchQuantity && i + j < insertQuantity; j++) {
+                script += "('Person " + (i + j) + "')";
+                if (j + 1 < batchQuantity) {
+                    script += ",";
+                }
+            }
+            script += " RETURNING idperson";
+            let persons = await db.request(script, []);
+
+            if (batchQuantity > 1) {
+                script = "INSERT INTO Follow (idFollower, idFollowed) VALUES ";
+                for (const element of persons) {
+                    let rand: number = random();
+                    if (rand > 0.6) {
+                        let maxFollow: number = randomInt(0, 20);
+                        let alreadyFollowed: number[] = [];
+                        alreadyFollowed.push(element.idperson);
+                        for (let k = 0; k < maxFollow; k++) {
+                            rand = randomInt(0, persons.length);
+                            while (alreadyFollowed.includes(persons[rand].idperson)) {
+                                rand = randomInt(0, persons.length);
+                            }
+                            alreadyFollowed.push(persons[rand].idperson);
+                            script += "(" + element.idperson + "," + persons[rand].idperson + "),";
+                        }
+                    }
+                }
+
+                script = script.substring(0, script.length - 1);
+                await db.request(script, []);
+            }
+
+            script = "INSERT INTO Purchase (datePurchase, idPerson) VALUES ";
+            for (let j = 0; j < persons.length; j++) {
+                let date: Date = randomDate(new Date(2023, 0, 1), new Date());
+                script += "('" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+                script += "'," + persons[j].idperson + ")";
+                if (j + 1 < batchQuantity) {
+                    script += ",";
+                }
+            }
+            script += " RETURNING idpurchase";
+
+            let purchases = await db.request(script, []);
+
+            script = "INSERT INTO Purchase_content (idProduct, idPurchase, quantity) VALUES ";
+            for (const element of purchases) {
+                let maxProduct: number = randomInt(1, 5);
+                let alreadyPurchased: number[] = [];
+                for (let k = 0; k < maxProduct; k++) {
+                    let rand = randomInt(0, products.length);
+                    while (alreadyPurchased.includes(products[rand].idproduct)) {
+                        rand = randomInt(0, products.length);
+                    }
+                    alreadyPurchased.push(products[rand].idproduct);
+                    let quantity: number = randomInt(1, 10);
+                    script += "(" + products[rand].idproduct + "," + element.idpurchase + ", " + quantity + "),";
+                }
+            }
+            script = script.substring(0, script.length - 1);
+            await db.request(script, []);
+        }
+
+        return new Date().getTime() - time;
+    }
 
     public async generatePerson(insertQuantity: number, batchQuantity: number): Promise<number>{
         let db: IDatabase = Database.getDatabase();
